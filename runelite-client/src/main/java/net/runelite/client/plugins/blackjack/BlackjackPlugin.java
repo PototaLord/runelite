@@ -71,9 +71,7 @@ public class BlackjackPlugin extends Plugin
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		if (client.getGameState() != GameState.LOGGED_IN ||
-			client.getVar(Varbits.QUEST_THE_FEUD) < 13 ||
-			client.getLocalPlayer().getWorldLocation().getRegionID() != POLLNIVNEACH_REGION)
+		if (client.getGameState() != GameState.LOGGED_IN)
 		{
 			return;
 		}
@@ -82,6 +80,7 @@ public class BlackjackPlugin extends Plugin
 		String target = Text.removeTags(event.getTarget().toLowerCase());
 		if (isKnockedOut && nextKnockOutTick >= client.getTickCount())
 		{
+
 			menuManager.addSwap("", target, "pickpocket", target, false, false);
 		}
 		else
