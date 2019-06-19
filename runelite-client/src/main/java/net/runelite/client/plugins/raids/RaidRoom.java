@@ -31,46 +31,7 @@ import net.runelite.api.Tile;
 
 public class RaidRoom
 {
-	static final int ROOM_MAX_SIZE = 32;
-	@Getter
-	private final Tile base;
-	@Getter
-	@Setter
-	private Type type;
-	@Getter
-	@Setter
-	private Boss boss;
-	@Getter
-	@Setter
-	private Puzzle puzzle;
-	@Getter
-	@Setter
-	private RaidRoom previousRoom;
-	@Getter
-	@Setter
-	private RaidRoom nextRoom;
-
-	RaidRoom(Tile base, Type type)
-	{
-		this.base = base;
-		this.type = type;
-	}
-
-	@Override
-	public String toString()
-	{
-		switch (type)
-		{
-			case COMBAT:
-				return " " + type.getName() + " - " + boss.getName();
-
-			case PUZZLE:
-				return " " + type.getName() + " - " + puzzle.getName();
-
-			default:
-				return " " + type.getName();
-		}
-	}
+	public static final int ROOM_MAX_SIZE = 32;
 
 	@AllArgsConstructor
 	public enum Type
@@ -156,6 +117,51 @@ public class RaidRoom
 			}
 
 			return null;
+		}
+	}
+
+	@Getter
+	private final Tile base;
+
+	@Getter
+	@Setter
+	private Type type;
+
+	@Getter
+	@Setter
+	private Boss boss;
+
+	@Getter
+	@Setter
+	private Puzzle puzzle;
+
+	@Getter
+	@Setter
+	private RaidRoom previousRoom;
+
+	@Getter
+	@Setter
+	private RaidRoom nextRoom;
+
+	public RaidRoom(Tile base, Type type)
+	{
+		this.base = base;
+		this.type = type;
+	}
+
+	@Override
+	public String toString()
+	{
+		switch (type)
+		{
+			case COMBAT:
+				return "RaidRoom (type: " + type.getName() + ", " + boss.getName() + ")";
+
+			case PUZZLE:
+				return "RaidRoom (type: " + type.getName() + ", " + puzzle.getName() + ")";
+
+			default:
+				return "RaidRoom (type: " + type.getName() + ")";
 		}
 	}
 }

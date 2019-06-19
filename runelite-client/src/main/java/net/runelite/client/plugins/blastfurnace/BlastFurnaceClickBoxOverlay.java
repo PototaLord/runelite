@@ -24,23 +24,15 @@
  */
 package net.runelite.client.plugins.blastfurnace;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.geom.Area;
-import javax.inject.Inject;
-import net.runelite.api.Client;
-import net.runelite.api.EquipmentInventorySlot;
-import net.runelite.api.GameObject;
-import net.runelite.api.InventoryID;
-import net.runelite.api.Item;
-import net.runelite.api.ItemContainer;
-import net.runelite.api.ItemID;
 import net.runelite.api.Point;
-import net.runelite.api.Varbits;
+import net.runelite.api.*;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
+
+import javax.inject.Inject;
+import java.awt.*;
+import java.awt.geom.Area;
 
 class BlastFurnaceClickBoxOverlay extends Overlay
 {
@@ -66,8 +58,16 @@ class BlastFurnaceClickBoxOverlay extends Overlay
 
 		if (config.showConveyorBelt() && plugin.getConveyorBelt() != null)
 		{
-			Color color = dispenserState == 1 ? Color.RED : Color.GREEN;
+			boolean hasGoldSmith = hasGoldGloves();
+			Color color;
+			if(config.goldSmithing())
+				color = dispenserState == 0 && hasGoldSmith ? Color.GREEN : (dispenserState == 1 ? Color.GREEN : Color.RED);
+			else
+				color = dispenserState == 1 ? Color.RED : Color.GREEN;
+
+
 			renderObject(plugin.getConveyorBelt(), graphics, color);
+
 		}
 
 		if (config.showBarDispenser() && plugin.getBarDispenser() != null)
@@ -77,6 +77,8 @@ class BlastFurnaceClickBoxOverlay extends Overlay
 
 			renderObject(plugin.getBarDispenser(), graphics, color);
 		}
+		if(config.showBankchest() && plugin.getBankChest() != null)
+			renderObject(plugin.getBankChest(), graphics, Color.green);
 
 		return null;
 	}
@@ -99,6 +101,26 @@ class BlastFurnaceClickBoxOverlay extends Overlay
 
 		Item glove = items[idx];
 		return glove != null && glove.getId() == ItemID.ICE_GLOVES;
+	}
+
+	private boolean hasGoldGloves()
+	{
+		ItemContainer equipmentContainer = client.getItemContainer(InventoryID.EQUIPMENT);
+		if (equipmentContainer == null)
+		{
+			return false;
+		}
+
+		Item[] items = equipmentContainer.getItems();
+		int idx = EquipmentInventorySlot.GLOVES.getSlotIdx();
+
+		if (items == null || idx >= items.length)
+		{
+			return false;
+		}
+
+		Item glove = items[idx];
+		return glove != null && glove.getId() == ItemID.GOLDSMITH_GAUNTLETS;
 	}
 
 	private void renderObject(GameObject object, Graphics2D graphics, Color color)
@@ -127,4 +149,6 @@ class BlastFurnaceClickBoxOverlay extends Overlay
 			}
 		}
 	}
+
+
 }

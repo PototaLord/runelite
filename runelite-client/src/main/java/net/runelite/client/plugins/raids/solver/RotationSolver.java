@@ -32,6 +32,25 @@ import net.runelite.client.plugins.raids.RaidRoom.Boss;
 
 public class RotationSolver
 {
+	private static class Rotation<E> extends ArrayList<E>
+	{
+		Rotation(Collection<? extends E> bosses)
+		{
+			super(bosses);
+		}
+
+		@Override
+		public E get(int index)
+		{
+			if (index < 0)
+			{
+				index = index + size();
+			}
+
+			return super.get(index % size());
+		}
+	}
+
 	private static final Rotation[] ROTATIONS =
 		{
 			new Rotation<>(Arrays.asList(Boss.TEKTON, Boss.VASA, Boss.GUARDIANS, Boss.MYSTICS, Boss.SHAMANS, Boss.MUTTADILES, Boss.VANGUARDS, Boss.VESPULA)),
@@ -127,24 +146,5 @@ public class RotationSolver
 		}
 
 		return true;
-	}
-
-	private static class Rotation<E> extends ArrayList<E>
-	{
-		Rotation(Collection<? extends E> bosses)
-		{
-			super(bosses);
-		}
-
-		@Override
-		public E get(int index)
-		{
-			if (index < 0)
-			{
-				index = index + size();
-			}
-
-			return super.get(index % size());
-		}
 	}
 }

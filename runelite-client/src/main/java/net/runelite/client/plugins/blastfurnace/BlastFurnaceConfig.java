@@ -52,4 +52,22 @@ public interface BlastFurnaceConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+			keyName = "showBankChest",
+			name = "Show bank chest clickbox",
+			description = "Configures whether or not the clickbox for the bank chest is displayed",
+			position = 3
+	)
+	default boolean showBankchest() { return true;}
+
+	@ConfigItem(
+			keyName = "goldSmithing",
+			name = "gold smithing gauntlet reminder",
+			description = "Makes conveyor belt outline red when goldsmithing gauntlets are not equipped",
+			position = 4
+	)
+	default boolean goldSmithing() { return true;}
+
+
 }
