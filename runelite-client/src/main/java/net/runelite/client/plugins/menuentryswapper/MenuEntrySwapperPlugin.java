@@ -541,7 +541,9 @@ public class MenuEntrySwapperPlugin extends Plugin
 		final String target = Text.standardize(event.getTarget());
 		final NPC hintArrowNpc = client.getHintArrowNpc();
 		entries = client.getMenuEntries();
-
+		if(target.contains(" log")){
+			swap(client, "drop", option, target);
+		}
 		if (option.contains("withdraw") || option.contains("deposit"))
 		{
 			if (config.getWithdrawOne())
@@ -902,7 +904,7 @@ public class MenuEntrySwapperPlugin extends Plugin
 
 		if (option.equals("talk-to"))
 		{
-			if (config.swapPickpocket() && target.contains("h.a.m."))
+			if (config.swapPickpocket())
 			{
 				swap(client, "pickpocket", option, target, true);
 			}

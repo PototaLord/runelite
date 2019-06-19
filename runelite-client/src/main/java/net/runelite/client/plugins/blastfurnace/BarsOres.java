@@ -25,10 +25,11 @@
 package net.runelite.client.plugins.blastfurnace;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import lombok.Getter;
 import net.runelite.api.ItemID;
 import net.runelite.api.Varbits;
+
+import java.util.Map;
 
 public enum BarsOres
 {

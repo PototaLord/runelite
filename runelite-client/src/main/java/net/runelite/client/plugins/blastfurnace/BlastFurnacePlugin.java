@@ -26,16 +26,11 @@
 package net.runelite.client.plugins.blastfurnace;
 
 import com.google.inject.Provides;
-import java.time.Duration;
-import java.time.Instant;
-import javax.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
-import static net.runelite.api.NullObjectID.NULL_9092;
-import static net.runelite.api.ObjectID.CONVEYOR_BELT;
 import net.runelite.api.Skill;
 import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.api.events.GameObjectSpawned;
@@ -52,6 +47,13 @@ import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.util.Text;
 
+import javax.inject.Inject;
+import java.time.Duration;
+import java.time.Instant;
+
+import static net.runelite.api.NullObjectID.NULL_9092;
+import static net.runelite.api.ObjectID.CONVEYOR_BELT;
+
 @PluginDescriptor(
 	name = "Blast Furnace",
 	description = "Show helpful information for the Blast Furnace minigame",
@@ -60,13 +62,18 @@ import net.runelite.client.util.Text;
 public class BlastFurnacePlugin extends Plugin
 {
 	private static final int BAR_DISPENSER = NULL_9092;
+	private static final int BANK_CHEST = 26707;
 	private static final String FOREMAN_PERMISSION_TEXT = "Okay, you can use the furnace for ten minutes. Remember, you only need half as much coal as with a regular furnace.";
 
 	@Getter(AccessLevel.PACKAGE)
 	private GameObject conveyorBelt;
 
 	@Getter(AccessLevel.PACKAGE)
+	private GameObject bankChest;
+
+	@Getter(AccessLevel.PACKAGE)
 	private GameObject barDispenser;
+
 
 	private ForemanTimer foremanTimer;
 
@@ -108,11 +115,12 @@ public class BlastFurnacePlugin extends Plugin
 		overlayManager.remove(clickBoxOverlay);
 		conveyorBelt = null;
 		barDispenser = null;
+		bankChest = null;
 		foremanTimer = null;
 	}
 
 	@Provides
-	BlastFurnaceConfig provideConfig(ConfigManager configManager)
+    BlastFurnaceConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(BlastFurnaceConfig.class);
 	}
@@ -131,6 +139,10 @@ public class BlastFurnacePlugin extends Plugin
 			case BAR_DISPENSER:
 				barDispenser = gameObject;
 				break;
+
+			case BANK_CHEST:
+				bankChest = gameObject;
+				break;
 		}
 	}
 
@@ -148,6 +160,9 @@ public class BlastFurnacePlugin extends Plugin
 			case BAR_DISPENSER:
 				barDispenser = null;
 				break;
+			case BANK_CHEST:
+				bankChest = null;
+				break;
 		}
 	}
 
@@ -158,6 +173,7 @@ public class BlastFurnacePlugin extends Plugin
 		{
 			conveyorBelt = null;
 			barDispenser = null;
+			bankChest = null;
 		}
 	}
 

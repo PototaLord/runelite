@@ -213,7 +213,6 @@ public class LayoutSolver
 				room.setPrevious(lastRoom);
 				lastRoom.setNext(room);
 				layout.add(room);
-				layout.setTest(code);
 				position += 8;
 			}
 

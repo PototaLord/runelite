@@ -24,10 +24,11 @@
  */
 package net.runelite.client.plugins.blastfurnace;
 
-import java.time.temporal.ChronoUnit;
 import net.runelite.api.ItemID;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.infobox.Timer;
+
+import java.time.temporal.ChronoUnit;
 
 class ForemanTimer extends Timer
 {

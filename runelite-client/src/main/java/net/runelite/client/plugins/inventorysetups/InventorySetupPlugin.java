@@ -162,8 +162,8 @@ public class InventorySetupPlugin extends Plugin
 				JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
-
-		if (inventorySetups.containsKey(name))
+		Boolean setupNameCheck = inventorySetups.containsKey(name);
+		if (setupNameCheck == null || setupNameCheck)
 		{
 			String builder = "The setup " + name + " already exists. " +
 				"Would you like to replace it with the current setup?";
