@@ -97,4 +97,15 @@ public interface BankConfig extends Config
 	{
 		return false;
 	}
+
+	@ConfigItem(
+			keyName = "rightClickSearch",
+			name = "Disable left click Search",
+			description = "Configures whether the bank looting bag button will bank your looting bag contents on left click",
+			position = 7
+	)
+	default boolean rightClickSearch()
+	{
+		return false;
+	}
 }
