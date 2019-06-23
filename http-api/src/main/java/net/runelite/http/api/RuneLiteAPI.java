@@ -25,6 +25,7 @@
 package net.runelite.http.api;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -39,19 +40,18 @@ import org.slf4j.LoggerFactory;
 
 public class RuneLiteAPI
 {
-	private static final Logger logger = LoggerFactory.getLogger(RuneLiteAPI.class);
-
 	public static final String RUNELITE_AUTH = "RUNELITE-AUTH";
-
 	public static final OkHttpClient CLIENT;
-	public static final Gson GSON = new Gson();
-	public static String userAgent;
-
+	public static final OkHttpClient RLP_CLIENT;
+	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	private static final Logger logger = LoggerFactory.getLogger(RuneLiteAPI.class);
 	private static final String BASE = "https://api.runelite.net";
+	private static final String PLUS_BASE = "https://api.runelitepl.us";
 	private static final String RLPLUS = "https://session.runelitepl.us";
 	private static final String WSBASE = "https://api.runelite.net/ws";
 	private static final String STATICBASE = "https://static.runelite.net";
 	private static final Properties properties = new Properties();
+	public static String userAgent;
 	private static String version;
 	private static int rsVersion;
 
@@ -79,6 +79,24 @@ public class RuneLiteAPI
 		}
 
 		CLIENT = new OkHttpClient.Builder()
+			.pingInterval(30, TimeUnit.SECONDS)
+			.addNetworkInterceptor(new Interceptor()
+			{
+
+				@Override
+				public Response intercept(Chain chain) throws IOException
+				{
+					Request userAgentRequest = chain.request()
+						.newBuilder()
+						.header("User-Agent", userAgent)
+						.build();
+					return chain.proceed(userAgentRequest);
+				}
+			})
+			.build();
+
+
+		RLP_CLIENT = new OkHttpClient.Builder()
 			.pingInterval(30, TimeUnit.SECONDS)
 			.addNetworkInterceptor(new Interceptor()
 			{
@@ -123,6 +141,11 @@ public class RuneLiteAPI
 		}
 
 		return HttpUrl.parse(BASE + "/runelite-" + getVersion());
+	}
+
+	public static HttpUrl getPlusApiBase()
+	{
+		return HttpUrl.parse(PLUS_BASE + "/runelite-" + getVersion());
 	}
 
 	public static HttpUrl getStaticBase()
