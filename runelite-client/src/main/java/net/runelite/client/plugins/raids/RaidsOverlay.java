@@ -192,8 +192,8 @@ public class RaidsOverlay extends Overlay
 			color = Color.RED;
 		}
 
-		Matcher firstMatcher = FIRST_HALF.matcher(plugin.getRaid().getFullRotationString());
-		Matcher secondMatcher = SECOND_HALF.matcher(plugin.getRaid().getFullRotationString());
+		Matcher firstMatcher = FIRST_HALF.matcher(plugin.getRaid().getRotationString());
+		Matcher secondMatcher = SECOND_HALF.matcher(plugin.getRaid().getRotationString());
 		int combatCount = 0;
 		int roomCount = 0;
 		List<Integer> iceRooms = new ArrayList<>();
@@ -511,17 +511,17 @@ public class RaidsOverlay extends Overlay
 
 	private boolean crabHandler(String firstHalf, String secondHalf)
 	{
-		return (firstHalf.contains("Crabs") && goodCrabsFirst.contains(plugin.getLayoutFullCode()))
-				|| (secondHalf.contains("Crabs") && goodCrabsSecond.contains(plugin.getLayoutFullCode()));
+		return (firstHalf.contains("Crabs") && goodCrabsFirst.contains(plugin.getLayoutWhitelist()))
+				|| (secondHalf.contains("Crabs") && goodCrabsSecond.contains(plugin.getLayoutWhitelist()));
 	}
 
 	boolean recordRaid()
 	{
-		Matcher firstMatcher = FIRST_HALF.matcher(plugin.getRaid().getFullRotationString());
-		Matcher secondMatcher = SECOND_HALF.matcher(plugin.getRaid().getFullRotationString());
+		Matcher firstMatcher = FIRST_HALF.matcher(plugin.getRaid().getRotationString());
+		Matcher secondMatcher = SECOND_HALF.matcher(plugin.getRaid().getRotationString());
 		if (plugin.getRaid().getRotationString().toLowerCase().equals("vasa,tekton,vespula")
-				&& plugin.getRaid().getFullRotationString().toLowerCase().contains("crabs")
-				&& plugin.getRaid().getFullRotationString().toLowerCase().contains("tightrope"))
+				&& plugin.getRaid().getRotationString().toLowerCase().contains("crabs")
+				&& plugin.getRaid().getRotationString().toLowerCase().contains("tightrope"))
 		{
 			if (firstMatcher.find() && secondMatcher.find())
 			{
