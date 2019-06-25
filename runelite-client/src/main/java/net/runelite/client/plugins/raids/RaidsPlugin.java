@@ -654,7 +654,7 @@ public class RaidsPlugin extends Plugin
 					return;
 				}
 
-				layoutFullCode = layout.getTest();
+				layoutFullCode = layout.getRooms().toString();
 				log.debug("Full Layout Code: " + layoutFullCode);
 				raid.updateLayout(layout);
 				RotationSolver.solve(raid.getCombatRooms());
