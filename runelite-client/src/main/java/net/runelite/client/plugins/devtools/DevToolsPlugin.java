@@ -101,6 +101,9 @@ public class DevToolsPlugin extends Plugin
 	private WorldMapRegionOverlay mapRegionOverlay;
 
 	@Inject
+	private SoundEffectOverlay soundEffectOverlay;
+
+	@Inject
 	private EventBus eventBus;
 
 	private DevToolsButton players;
@@ -128,6 +131,7 @@ public class DevToolsPlugin extends Plugin
 	private DevToolsButton widgetInspector;
 	private DevToolsButton varInspector;
 	private DevToolsButton logMenuActions;
+	private DevToolsButton soundEffects;
 	private NavigationButton navButton;
 
 	@Provides
@@ -154,21 +158,27 @@ public class DevToolsPlugin extends Plugin
 
 		location = new DevToolsButton("Location");
 		worldMapLocation = new DevToolsButton("World Map Location");
+
 		tileLocation = new DevToolsButton("Tile Location");
 		cursorPos = new DevToolsButton("Cursor Position");
+
 		cameraPosition = new DevToolsButton("Camera Position");
-
 		chunkBorders = new DevToolsButton("Chunk Borders");
-		mapSquares = new DevToolsButton("Map Squares");
 
+		mapSquares = new DevToolsButton("Map Squares");
 		lineOfSight = new DevToolsButton("Line Of Sight");
+
 		validMovement = new DevToolsButton("Valid Movement");
 		interacting = new DevToolsButton("Interacting");
-		examine = new DevToolsButton("Examine");
 
+		examine = new DevToolsButton("Examine");
 		detachedCamera = new DevToolsButton("Detached Camera");
+
 		widgetInspector = new DevToolsButton("Widget Inspector");
 		varInspector = new DevToolsButton("Var Inspector");
+
+		soundEffects = new DevToolsButton("Sound Effects");
+		logMenuActions = new DevToolsButton("Menu Actions");
 
 		overlayManager.add(overlay);
 		overlayManager.add(locationOverlay);
@@ -176,8 +186,7 @@ public class DevToolsPlugin extends Plugin
 		overlayManager.add(cameraOverlay);
 		overlayManager.add(worldMapLocationOverlay);
 		overlayManager.add(mapRegionOverlay);
-
-		logMenuActions = new DevToolsButton("Menu Actions");
+		overlayManager.add(soundEffectOverlay);
 
 		final DevToolsPanel panel = injector.getInstance(DevToolsPanel.class);
 
@@ -191,17 +200,21 @@ public class DevToolsPlugin extends Plugin
 			.build();
 
 		clientToolbar.addNavigation(navButton);
+
+		eventBus.register(soundEffectOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(soundEffectOverlay);
 		overlayManager.remove(overlay);
 		overlayManager.remove(locationOverlay);
 		overlayManager.remove(sceneOverlay);
 		overlayManager.remove(cameraOverlay);
 		overlayManager.remove(worldMapLocationOverlay);
 		overlayManager.remove(mapRegionOverlay);
+		overlayManager.remove(soundEffectOverlay);
 		clientToolbar.removeNavigation(navButton);
 	}
 
@@ -245,7 +258,7 @@ public class DevToolsPlugin extends Plugin
 				int value = Integer.parseInt(args[1]);
 				client.setVarpValue(client.getVarps(), varp, value);
 				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Set VarPlayer " + varp + " to " + value, null);
-				VarbitChanged varbitChanged = new VarbitChanged();
+				VarbitChanged varbitChanged = VarbitChanged.INSTANCE;
 				varbitChanged.setIndex(varp);
 				eventBus.post(varbitChanged); // fake event
 				break;
@@ -263,7 +276,7 @@ public class DevToolsPlugin extends Plugin
 				int value = Integer.parseInt(args[1]);
 				client.setVarbitValue(client.getVarps(), varbit, value);
 				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Set varbit " + varbit + " to " + value, null);
-				eventBus.post(new VarbitChanged()); // fake event
+				eventBus.post(VarbitChanged.INSTANCE); // fake event
 				break;
 			}
 			case "addxp":
@@ -280,7 +293,7 @@ public class DevToolsPlugin extends Plugin
 
 				client.queueChangedSkill(skill);
 
-				ExperienceChanged experienceChanged = new ExperienceChanged();
+				ExperienceChanged experienceChanged = ExperienceChanged.INSTANCE;
 				experienceChanged.setSkill(skill);
 				eventBus.post(experienceChanged);
 				break;
@@ -299,11 +312,11 @@ public class DevToolsPlugin extends Plugin
 
 				client.queueChangedSkill(skill);
 
-				ExperienceChanged experienceChanged = new ExperienceChanged();
+				ExperienceChanged experienceChanged = ExperienceChanged.INSTANCE;
 				experienceChanged.setSkill(skill);
 				eventBus.post(experienceChanged);
 
-				BoostedLevelChanged boostedLevelChanged = new BoostedLevelChanged();
+				BoostedLevelChanged boostedLevelChanged = BoostedLevelChanged.INSTANCE;
 				boostedLevelChanged.setSkill(skill);
 				eventBus.post(boostedLevelChanged);
 				break;
@@ -339,6 +352,12 @@ public class DevToolsPlugin extends Plugin
 				Player player = client.getLocalPlayer();
 				player.getPlayerAppearance().getEquipmentIds()[KitType.CAPE.getIndex()] = id + 512;
 				player.getPlayerAppearance().setHash();
+				break;
+			}
+			case "sound":
+			{
+				int id = Integer.parseInt(args[0]);
+				client.playSoundEffect(id);
 				break;
 			}
 		}

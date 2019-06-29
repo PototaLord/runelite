@@ -29,17 +29,16 @@ import java.awt.Color;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
-import net.runelite.client.config.Keybind;
 import net.runelite.client.config.Stub;
 
 @ConfigGroup("raids")
 public interface RaidsConfig extends Config
 {
 	@ConfigItem(
-			keyName = "scouterConfig",
-			name = "Scouter Config",
-			description = "",
-			position = 0
+		keyName = "scouterConfig",
+		name = "Scouter Config",
+		description = "",
+		position = 0
 	)
 	default Stub scouterConfig()
 	{
@@ -48,11 +47,11 @@ public interface RaidsConfig extends Config
 
 
 	@ConfigItem(
-			position = 1,
-			parent = "scouterConfig",
-			keyName = "enhanceScouterTitle",
-			name = "Enhance scouter title",
-			description = "Adds #combat and good puzzles to scouter title"
+		position = 1,
+		parent = "scouterConfig",
+		keyName = "enhanceScouterTitle",
+		name = "Enhance scouter title",
+		description = "Adds #combat and good puzzles to scouter title"
 	)
 	default boolean enhanceScouterTitle()
 	{
@@ -60,11 +59,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 2,
-			parent = "scouterConfig",
-			keyName = "hideBackground",
-			name = "Hide Scouter Background",
-			description = "Removes the scouter background, and makes it transparent."
+		position = 2,
+		parent = "scouterConfig",
+		keyName = "hideBackground",
+		name = "Hide Scouter Background",
+		description = "Removes the scouter background, and makes it transparent."
 	)
 	default boolean hideBackground()
 	{
@@ -72,11 +71,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 2,
-			parent = "scouterConfig",
-			keyName = "raidsTimer",
-			name = "Display elapsed raid time",
-			description = "Display elapsed raid time"
+		position = 2,
+		parent = "scouterConfig",
+		keyName = "raidsTimer",
+		name = "Display elapsed raid time",
+		description = "Display elapsed raid time"
 	)
 	default boolean raidsTimer()
 	{
@@ -84,11 +83,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 3,
-			parent = "scouterConfig",
-			keyName = "pointsMessage",
-			name = "Display points in chatbox after raid",
-			description = "Display a message with total points, individual points and percentage at the end of a raid"
+		position = 3,
+		parent = "scouterConfig",
+		keyName = "pointsMessage",
+		name = "Display points in chatbox after raid",
+		description = "Display a message with total points, individual points and percentage at the end of a raid"
 	)
 	default boolean pointsMessage()
 	{
@@ -97,11 +96,11 @@ public interface RaidsConfig extends Config
 
 
 	@ConfigItem(
-			position = 4,
-			parent = "scouterConfig",
-			keyName = "ptsHr",
-			name = "Enable points per hour message",
-			description = "Enable the message"
+		position = 4,
+		parent = "scouterConfig",
+		keyName = "ptsHr",
+		name = "Enable points per hour message",
+		description = "Enable the message"
 	)
 	default boolean ptsHr()
 	{
@@ -109,11 +108,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 5,
-			parent = "scouterConfig",
-			keyName = "scoutOverlay",
-			name = "Show scout overlay",
-			description = "Display an overlay that shows the current raid layout (when entering lobby)"
+		position = 5,
+		parent = "scouterConfig",
+		keyName = "scoutOverlay",
+		name = "Show scout overlay",
+		description = "Display an overlay that shows the current raid layout (when entering lobby)"
 	)
 	default boolean scoutOverlay()
 	{
@@ -121,11 +120,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 6,
-			parent = "scouterConfig",
-			keyName = "scoutOverlayAtBank",
-			name = "Show scout overlay outside lobby",
-			description = "Keep the overlay active while at the raids area"
+		position = 6,
+		parent = "scouterConfig",
+		keyName = "scoutOverlayAtBank",
+		name = "Show scout overlay outside lobby",
+		description = "Keep the overlay active while at the raids area"
 	)
 	default boolean scoutOverlayAtBank()
 	{
@@ -133,11 +132,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 7,
-			parent = "scouterConfig",
-			keyName = "scoutOverlayInRaid",
-			name = "Show scout overlay inside raid",
-			description = "Keep the overlay active while inside raid"
+		position = 7,
+		parent = "scouterConfig",
+		keyName = "scoutOverlayInRaid",
+		name = "Show scout overlay inside raid",
+		description = "Keep the overlay active while inside raid"
 	)
 	default boolean scoutOverlayInRaid()
 	{
@@ -145,11 +144,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 8,
-			parent = "scouterConfig",
-			keyName = "displayFloorBreak",
-			name = "Layout floor break",
-			description = "Displays floor break in layout"
+		position = 8,
+		parent = "scouterConfig",
+		keyName = "displayFloorBreak",
+		name = "Layout floor break",
+		description = "Displays floor break in layout"
 	)
 	default boolean displayFloorBreak()
 	{
@@ -157,11 +156,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 9,
-			parent = "scouterConfig",
-			keyName = "showRecommendedItems",
-			name = "Show recommended items",
-			description = "Adds overlay with recommended items to scouter"
+		position = 9,
+		parent = "scouterConfig",
+		keyName = "showRecommendedItems",
+		name = "Show recommended items",
+		description = "Adds overlay with recommended items to scouter"
 	)
 	default boolean showRecommendedItems()
 	{
@@ -169,13 +168,13 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 10,
-			parent = "scouterConfig",
-			keyName = "recommendedItems",
-			name = "Recommended items",
-			hidden = true,
-			unhide = "showRecommendedItems",
-			description = "User-set recommended items in the form: [muttadiles,ice barrage,zamorak godsword],[tekton,elder maul], ..."
+		position = 10,
+		parent = "scouterConfig",
+		keyName = "recommendedItems",
+		name = "Recommended items",
+		hidden = true,
+		unhide = "showRecommendedItems",
+		description = "User-set recommended items in the form: [muttadiles,ice barrage,zamorak godsword],[tekton,elder maul], ..."
 	)
 	default String recommendedItems()
 	{
@@ -183,11 +182,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 11,
-			parent = "scouterConfig",
-			keyName = "alwaysShowWorldAndCC",
-			name = "Always show CC and World",
-			description = "The CC and World are not removed from being in the in-game scouter"
+		position = 11,
+		parent = "scouterConfig",
+		keyName = "alwaysShowWorldAndCC",
+		name = "Always show CC and World",
+		description = "The CC and World are not removed from being in the in-game scouter"
 	)
 	default boolean alwaysShowWorldAndCC()
 	{
@@ -195,11 +194,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 12,
-			parent = "scouterConfig",
-			keyName = "layoutMessage",
-			name = "Send raid layout message when entering raid",
-			description = "Sends game message with raid layout on entering new raid"
+		position = 12,
+		parent = "scouterConfig",
+		keyName = "layoutMessage",
+		name = "Send raid layout message when entering raid",
+		description = "Sends game message with raid layout on entering new raid"
 	)
 	default boolean layoutMessage()
 	{
@@ -207,10 +206,10 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "roomConfig",
-			name = "Room Config",
-			description = "",
-			position = 13
+		keyName = "roomConfig",
+		name = "Room Config",
+		description = "",
+		position = 13
 	)
 	default Stub roomConfig()
 	{
@@ -218,11 +217,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 14,
-			parent = "roomConfig",
-			keyName = "colorTightrope",
-			name = "Color tightrope",
-			description = "Colors tightrope a separate color"
+		position = 14,
+		parent = "roomConfig",
+		keyName = "colorTightrope",
+		name = "Color tightrope",
+		description = "Colors tightrope a separate color"
 	)
 	default boolean colorTightrope()
 	{
@@ -230,13 +229,13 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 15,
-			parent = "roomConfig",
-			keyName = "tightropeColor",
-			name = "Tightrope color",
-			description = "The color of tightropes",
-			hidden = true,
-			unhide = "colorTightrope"
+		position = 15,
+		parent = "roomConfig",
+		keyName = "tightropeColor",
+		name = "Tightrope color",
+		description = "The color of tightropes",
+		hidden = true,
+		unhide = "colorTightrope"
 	)
 	default Color tightropeColor()
 	{
@@ -244,12 +243,12 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 16,
-			parent = "roomConfig",
-			keyName = "crabHandler",
-			name = "Color crabs",
-			description = "If your crabs are good, it will color them to your set color." +
-					"<br> If they are bad crabs, it will be set to RED"
+		position = 16,
+		parent = "roomConfig",
+		keyName = "crabHandler",
+		name = "Color crabs",
+		description = "If your crabs are good, it will color them to your set color." +
+			"<br> If they are bad crabs, it will be set to RED"
 	)
 	default boolean crabHandler()
 	{
@@ -257,25 +256,39 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 17,
-			parent = "roomConfig",
-			keyName = "crabColor",
-			name = "Crab color",
-			description = "The color of good crabs",
-			hidden = true,
-			unhide = "crabHandler"
+		position = 17,
+		parent = "roomConfig",
+		keyName = "goodCrabColor",
+		name = "Good Crab color",
+		description = "The color of good crabs",
+		hidden = true,
+		unhide = "crabHandler"
 	)
-	default Color crabColor()
+	default Color goodCrabColor()
 	{
-		return Color.MAGENTA;
+		return new Color(255, 155, 245);
 	}
 
 	@ConfigItem(
-			position = 18,
-			parent = "roomConfig",
-			keyName = "enableRotationWhitelist",
-			name = "Enable rotation whitelist",
-			description = "Enable the rotation whitelist"
+		position = 17,
+		parent = "roomConfig",
+		keyName = "rareCrabColor",
+		name = "Rare Crab color",
+		description = "The color of rare crabs",
+		hidden = true,
+		unhide = "crabHandler"
+	)
+	default Color rareCrabColor()
+	{
+		return new Color(255, 200, 0);
+	}
+
+	@ConfigItem(
+		position = 18,
+		parent = "roomConfig",
+		keyName = "enableRotationWhitelist",
+		name = "Enable rotation whitelist",
+		description = "Enable the rotation whitelist"
 	)
 	default boolean enableRotationWhitelist()
 	{
@@ -283,13 +296,13 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 19,
-			parent = "roomConfig",
-			keyName = "whitelistedRotations",
-			name = "Whitelisted rotations",
-			hidden = true,
-			unhide = "enableRotationWhitelist",
-			description = "Warn when boss rotation doesn't match a whitelisted one. Add rotations like [tekton, muttadile, guardians]"
+		position = 19,
+		parent = "roomConfig",
+		keyName = "whitelistedRotations",
+		name = "Whitelisted rotations",
+		hidden = true,
+		unhide = "enableRotationWhitelist",
+		description = "Warn when boss rotation doesn't match a whitelisted one. Add rotations like [tekton, muttadile, guardians]"
 	)
 	default String whitelistedRotations()
 	{
@@ -297,11 +310,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 20,
-			parent = "roomConfig",
-			keyName = "enableLayoutWhitelist",
-			name = "Enable layout whitelist",
-			description = "Enable the layout whitelist"
+		position = 20,
+		parent = "roomConfig",
+		keyName = "enableLayoutWhitelist",
+		name = "Enable layout whitelist",
+		description = "Enable the layout whitelist"
 	)
 	default boolean enableLayoutWhitelist()
 	{
@@ -309,13 +322,13 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 21,
-			parent = "roomConfig",
-			keyName = "whitelistedLayouts",
-			name = "Whitelisted layouts",
-			hidden = true,
-			unhide = "enableLayoutWhitelist",
-			description = "Warn when layout doesn't match a whitelisted one. Add layouts like CFSCPPCSCF separated with comma"
+		position = 21,
+		parent = "roomConfig",
+		keyName = "whitelistedLayouts",
+		name = "Whitelisted layouts",
+		hidden = true,
+		unhide = "enableLayoutWhitelist",
+		description = "Warn when layout doesn't match a whitelisted one. Add layouts like CFSCPPCSCF separated with comma"
 	)
 	default String whitelistedLayouts()
 	{
@@ -323,11 +336,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 22,
-			parent = "roomConfig",
-			keyName = "showScavsFarms",
-			name = "Show scavengers and farming",
-			description = "Adds scavengers and farming to the room breakdown"
+		position = 22,
+		parent = "roomConfig",
+		keyName = "showScavsFarms",
+		name = "Show scavengers and farming",
+		description = "Adds scavengers and farming to the room breakdown"
 	)
 	default boolean showScavsFarms()
 	{
@@ -335,11 +348,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 23,
-			parent = "roomConfig",
-			keyName = "scavsBeforeIce",
-			name = "Show last scavs for Ice Demon",
-			description = "Highlights final scavengers before Ice Demon"
+		position = 23,
+		parent = "roomConfig",
+		keyName = "scavsBeforeIce",
+		name = "Show last scavs for Ice Demon",
+		description = "Highlights final scavengers before Ice Demon"
 	)
 	default boolean scavsBeforeIce()
 	{
@@ -347,11 +360,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 24,
-			parent = "roomConfig",
-			keyName = "scavsBeforeOlm",
-			name = "Show last scavs for Olm",
-			description = "Highlights final scavengers before Olm"
+		position = 24,
+		parent = "roomConfig",
+		keyName = "scavsBeforeOlm",
+		name = "Show last scavs for Olm",
+		description = "Highlights final scavengers before Olm"
 	)
 	default boolean scavsBeforeOlm()
 	{
@@ -359,11 +372,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 25,
-			parent = "roomConfig",
-			keyName = "scavPrepColor",
-			name = "Last scavs color",
-			description = "The color of the final scavs before Ice Demon/Olm"
+		position = 25,
+		parent = "roomConfig",
+		keyName = "scavPrepColor",
+		name = "Last scavs color",
+		description = "The color of the final scavs before Ice Demon/Olm"
 	)
 	default Color scavPrepColor()
 	{
@@ -371,14 +384,14 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 26,
-			parent = "roomConfig",
-			keyName = "whitelistedRooms",
-			name = "Whitelisted rooms",
-			description = "Display whitelisted rooms in green on the overlay. Separate with comma (full name)",
-			parse = true,
-			clazz = Parse.class,
-			method = "parse"
+		position = 26,
+		parent = "roomConfig",
+		keyName = "whitelistedRooms",
+		name = "Whitelisted rooms",
+		description = "Display whitelisted rooms in green on the overlay. Separate with comma (full name)",
+		parse = true,
+		clazz = Parse.class,
+		method = "parse"
 	)
 	default String whitelistedRooms()
 	{
@@ -386,14 +399,14 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 27,
-			parent = "roomConfig",
-			keyName = "blacklistedRooms",
-			name = "Blacklisted rooms",
-			description = "Display blacklisted rooms in red on the overlay. Separate with comma (full name)",
-			parse = true,
-			clazz = Parse.class,
-			method = "parse"
+		position = 27,
+		parent = "roomConfig",
+		keyName = "blacklistedRooms",
+		name = "Blacklisted rooms",
+		description = "Display blacklisted rooms in red on the overlay. Separate with comma (full name)",
+		parse = true,
+		clazz = Parse.class,
+		method = "parse"
 	)
 	default String blacklistedRooms()
 	{
@@ -401,10 +414,10 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "hideRooms",
-			name = "Hide Rooms",
-			description = "",
-			position = 28
+		keyName = "hideRooms",
+		name = "Hide Rooms",
+		description = "",
+		position = 28
 	)
 	default Stub hideRooms()
 	{
@@ -412,11 +425,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 29,
-			parent = "hideRooms",
-			keyName = "hideRopeless",
-			name = "Hide no Tightrope raids",
-			description = "Completely hides raids with no tightrope"
+		position = 29,
+		parent = "hideRooms",
+		keyName = "hideRopeless",
+		name = "Hide no Tightrope raids",
+		description = "Completely hides raids with no tightrope"
 	)
 	default boolean hideRopeless()
 	{
@@ -424,11 +437,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 30,
-			parent = "hideRooms",
-			keyName = "hideVanguards",
-			name = "Hide Vanguard raids",
-			description = "Completely hides raids with Vanguards"
+		position = 30,
+		parent = "hideRooms",
+		keyName = "hideVanguards",
+		name = "Hide Vanguard raids",
+		description = "Completely hides raids with Vanguards"
 	)
 	default boolean hideVanguards()
 	{
@@ -436,11 +449,11 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 31,
-			parent = "hideRooms",
-			keyName = "hideUnknownCombat",
-			name = "Hide Unknown combat raids",
-			description = "Completely hides raids with Unknown combat"
+		position = 31,
+		parent = "hideRooms",
+		keyName = "hideUnknownCombat",
+		name = "Hide Unknown combat raids",
+		description = "Completely hides raids with Unknown combat"
 	)
 	default boolean hideUnknownCombat()
 	{
@@ -448,24 +461,13 @@ public interface RaidsConfig extends Config
 	}
 
 	@ConfigItem(
-			position = 32,
-			keyName = "partyDisplay",
-			name = "Party Info Display",
-			description = "Display an overlay that shows information about the current party"
+		position = 32,
+		keyName = "partyDisplay",
+		name = "Party Info Display",
+		description = "Display an overlay that shows information about the current party"
 	)
 	default boolean partyDisplay()
 	{
 		return false;
-	}
-
-	@ConfigItem(
-			keyName = "hotkey",
-			name = "Toggle scout overlay",
-			description = "When pressed the scout overlay will be toggled. Must enable show scout overlay in raid",
-			position = 33
-	)
-	default Keybind hotkey()
-	{
-		return Keybind.NOT_SET;
 	}
 }

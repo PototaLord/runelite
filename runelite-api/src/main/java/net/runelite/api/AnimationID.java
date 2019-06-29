@@ -22,7 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api;;
+package net.runelite.api;
 
 /**
  * Utility class used for mapping animation IDs.
@@ -157,7 +157,7 @@ public final class AnimationID
 	public static final int HOME_MAKE_TABLET = 4067;
 	public static final int THIEVING_STALL = 832;
 	public static final int PICKPOCKET_SUCCESS = 881;
-	
+
 	//block animations for players and perhaps npcs as well?
 	public static final int BLOCK_DEFENDER = 4177;
 	public static final int BLOCK_NO_SHIELD = 420;
@@ -166,8 +166,15 @@ public final class AnimationID
 	public static final int BLOCK_UNARMED = 424; // Same Animation as failed pickpocked
 
 	// NPC animations
-	public static final int TZTOK_JAD_MAGIC_ATTACK = 2656;
 	public static final int TZTOK_JAD_RANGE_ATTACK = 2652;
+	public static final int TZTOK_JAD_MELEE_ATTACK = 2655;
+	public static final int TZTOK_JAD_MAGIC_ATTACK = 2656;
+	public static final int TOK_XIL_RANGE_ATTACK = 2633;
+	public static final int TOK_XIL_MELEE_ATTACK = 2628;
+	public static final int KET_ZEK_MELEE_ATTACK = 2644;
+	public static final int KET_ZEK_MAGE_ATTACK = 2647;
+	public static final int MEJ_KOT_MELEE_ATTACK = 2637;
+	public static final int MEJ_KOT_HEAL_ATTACK = 2639;
 	public static final int HELLHOUND_DEFENCE = 6566;
 	public static final int VORKATH_WAKE_UP = 7950;
 	public static final int VORKATH_DEATH = 7949;
@@ -252,7 +259,7 @@ public final class AnimationID
 	public static final int HYDRA_RANGED_4 = 8255;
 	public static final int HYDRA_4_1 = 8257;
 	public static final int HYDRA_4_2 = 8258;
-	
+
 	// INFERNO animations
 	public static final int JAL_NIB = 7574;
 	public static final int JAL_MEJRAH = 7578;
@@ -278,4 +285,31 @@ public final class AnimationID
 	public static final int GENERAL_AUTO1 = 7018;
 	public static final int GENERAL_AUTO2 = 7020;
 	public static final int GENERAL_AUTO3 = 7021;
+
+	//Zammy-poo
+	public static final int ZAMMY_GENERIC_AUTO = 64;
+	public static final int KRIL_AUTO = 6948;
+	public static final int KRIL_SPEC = 6950;
+	public static final int ZAKL_AUTO = 7077;
+	public static final int BALFRUG_AUTO = 4630;
+
+	//Sara-Poo
+	public static final int ZILYANA_MELEE_AUTO = 6964;
+	public static final int ZILYANA_AUTO = 6967;
+	public static final int ZILYANA_SPEC = 6970;
+	public static final int STARLIGHT_AUTO = 6376;
+	public static final int BREE_AUTO = 7026;
+	public static final int GROWLER_AUTO = 7037;
+
+	//Arma-Poo
+	public static final int KREE_RANGED = 6978;
+	public static final int SKREE_AUTO = 6955;
+	public static final int GEERIN_AUTO = 6956;
+	public static final int GEERIN_FLINCH = 6958;
+	public static final int KILISA_AUTO = 6957;
+
+	//Dag Kings
+	public static final int DAG_REX = 2853;
+	public static final int DAG_PRIME = 2854;
+	public static final int DAG_SUPREME = 2855;
 }

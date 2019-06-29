@@ -45,7 +45,6 @@ import net.runelite.api.Client;
 import net.runelite.api.Constants;
 import net.runelite.api.MainBufferProvider;
 import net.runelite.api.NullItemID;
-import net.runelite.api.Point;
 import net.runelite.api.RenderOverview;
 import net.runelite.api.Renderable;
 import net.runelite.api.WorldMapManager;
@@ -87,9 +86,6 @@ public class Hooks implements Callbacks
 	private static final Client client = injector.getInstance(Client.class);
 	private static final OverlayRenderer renderer = injector.getInstance(OverlayRenderer.class);
 	private static final OverlayManager overlayManager = injector.getInstance(OverlayManager.class);
-
-	private static final GameTick GAME_TICK = new GameTick();
-	private static final BeforeRender BEFORE_RENDER = new BeforeRender();
 
 	@Inject
 	private EventBus eventBus;
@@ -152,13 +148,13 @@ public class Hooks implements Callbacks
 
 			deferredEventBus.replay();
 
-			eventBus.post(GAME_TICK);
+			eventBus.post(GameTick.INSTANCE);
 
 			int tick = client.getTickCount();
 			client.setTickCount(tick + 1);
 		}
 
-		eventBus.post(BEFORE_RENDER);
+		eventBus.post(BeforeRender.INSTANCE);
 
 		clientThread.invoke();
 
@@ -375,9 +371,6 @@ public class Hooks implements Callbacks
 
 	/**
 	 * Copy an image
-	 *
-	 * @param src
-	 * @return
 	 */
 	private static Image copy(Image src)
 	{
@@ -396,18 +389,6 @@ public class Hooks implements Callbacks
 		MainBufferProvider bufferProvider = (MainBufferProvider) client.getBufferProvider();
 		BufferedImage image = (BufferedImage) bufferProvider.getImage();
 		Graphics2D graphics2d = image.createGraphics();
-
-		// Update selected scene tile
-		if (!client.isMenuOpen())
-		{
-			Point p = client.getMouseCanvasPosition();
-			p = new Point(
-				p.getX() - client.getViewportXOffset(),
-				p.getY() - client.getViewportYOffset());
-
-			client.setCheckClick(true);
-			client.setMouseCanvasHoverPosition(p);
-		}
 
 		try
 		{
@@ -527,7 +508,7 @@ public class Hooks implements Callbacks
 
 	public static boolean drawMenu()
 	{
-		BeforeMenuRender event = new BeforeMenuRender();
+		BeforeMenuRender event = BeforeMenuRender.INSTANCE;
 		client.getCallbacks().post(event);
 		return event.isConsumed();
 	}
