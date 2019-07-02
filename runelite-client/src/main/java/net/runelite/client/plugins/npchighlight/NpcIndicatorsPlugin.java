@@ -59,7 +59,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.GraphicsObjectCreated;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.events.NpcCompositionChanged;
+import net.runelite.api.events.NpcDefinitionChanged;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.callback.ClientThread;
@@ -333,7 +333,7 @@ public class NpcIndicatorsPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onNpcCompositionChanged(NpcCompositionChanged event)
+	public void onNpcDefinitionChanged(NpcDefinitionChanged event)
 	{
 		NPC npc = event.getNpc();
 		highlightNpcIfMatch(npc);
@@ -584,7 +584,16 @@ public class NpcIndicatorsPlugin extends Plugin
 
 					if (mn.getDiedOnTick() != -1)
 					{
-						mn.setRespawnTime(client.getTickCount() + 1 - mn.getDiedOnTick());
+						final int respawnTime = client.getTickCount() + 1 - mn.getDiedOnTick();
+
+						// By killing a monster and leaving the area before seeing it again, an erroneously lengthy
+						// respawn time can be recorded. Thus, if the respawn time is already set and is greater than
+						// the observed time, assume that the lower observed respawn time is correct.
+						if (mn.getRespawnTime() == -1 || respawnTime < mn.getRespawnTime())
+						{
+							mn.setRespawnTime(respawnTime);
+						}
+
 						mn.setDiedOnTick(-1);
 					}
 

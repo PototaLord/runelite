@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Woox <https://github.com/wooxsolo>
+ * Copyright (c) 2019, gazivodag <https://github.com/gazivodag>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -22,19 +21,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.events;
 
-import lombok.Value;
-import net.runelite.api.NPC;
+package net.runelite.client.plugins.lootingbagviewer;
 
-/**
- * Fires after the composition of an {@link NPC} changes.
- */
-@Value
-public class NpcCompositionChanged
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.Stub;
+
+@ConfigGroup("lootingbagviewer")
+public interface LootingBagViewerConfig extends Config
 {
-	/**
-	 * The NPC of which the composition changed.
-	 */
-	private final NPC npc;
+	@ConfigItem(
+			keyName = "overlayStub",
+			name = "Overlays",
+			description = "",
+			position = 0
+	)
+	default Stub overlayStub()
+	{
+		return new Stub();
+	}
+
+	@ConfigItem(
+			keyName = "renderViewer",
+			name = "Render Viewer",
+			description = "Shows second inventory on screen with looting bag items.",
+			position = 1,
+			parent = "overlayStub"
+	)
+	default boolean renderViewer()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "renderLootingBag",
+			name = "Render Looting Bag Worth",
+			description = "Shows current amount of GP over the looting bag.",
+			position = 2,
+			parent = "overlayStub"
+	)
+	default boolean renderLootingBag()
+	{
+		return true;
+	}
 }
