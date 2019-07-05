@@ -28,16 +28,19 @@ package net.runelite.client.plugins.skillcalculator;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import javax.inject.Singleton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.components.FlatTextField;
 
-@Getter
+@Getter(AccessLevel.PACKAGE)
+@Singleton
 class UICalculatorInputArea extends JPanel
 {
 	private final JTextField uiFieldCurrentLevel;
@@ -123,7 +126,7 @@ class UICalculatorInputArea extends JPanel
 		uiInput.setHoverBackgroundColor(ColorScheme.DARK_GRAY_HOVER_COLOR);
 		uiInput.setBorder(new EmptyBorder(5, 7, 5, 7));
 
-		uiLabel.setFont(FontManager.getRunescapeSmallFont());
+		uiLabel.setFont(FontManager.getSmallFont(getFont()));
 		uiLabel.setBorder(new EmptyBorder(0, 0, 4, 0));
 		uiLabel.setForeground(Color.WHITE);
 

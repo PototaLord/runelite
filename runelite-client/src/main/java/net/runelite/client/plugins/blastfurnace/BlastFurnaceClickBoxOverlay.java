@@ -24,31 +24,39 @@
  */
 package net.runelite.client.plugins.blastfurnace;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.geom.Area;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import net.runelite.api.Client;
+import net.runelite.api.EquipmentInventorySlot;
+import net.runelite.api.GameObject;
+import net.runelite.api.InventoryID;
+import net.runelite.api.Item;
+import net.runelite.api.ItemContainer;
+import net.runelite.api.ItemID;
 import net.runelite.api.Point;
-import net.runelite.api.*;
+import net.runelite.api.Varbits;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayPosition;
 
-import javax.inject.Inject;
-import java.awt.*;
-import java.awt.geom.Area;
-
+@Singleton
 class BlastFurnaceClickBoxOverlay extends Overlay
 {
 	private static final int MAX_DISTANCE = 2350;
 
 	private final Client client;
 	private final BlastFurnacePlugin plugin;
-	private final BlastFurnaceConfig config;
 
 	@Inject
-	private BlastFurnaceClickBoxOverlay(Client client, BlastFurnacePlugin plugin, BlastFurnaceConfig config)
+	private BlastFurnaceClickBoxOverlay(final Client client, final BlastFurnacePlugin plugin)
 	{
 		setPosition(OverlayPosition.DYNAMIC);
 		this.client = client;
 		this.plugin = plugin;
-		this.config = config;
 	}
 
 	@Override
@@ -56,29 +64,19 @@ class BlastFurnaceClickBoxOverlay extends Overlay
 	{
 		int dispenserState = client.getVar(Varbits.BAR_DISPENSER);
 
-		if (config.showConveyorBelt() && plugin.getConveyorBelt() != null)
+		if (plugin.isShowConveyorBelt() && plugin.getConveyorBelt() != null)
 		{
-			boolean hasGoldSmith = hasGoldGloves();
-			Color color;
-			if(config.goldSmithing())
-				color = dispenserState == 0 && hasGoldSmith ? Color.GREEN : (dispenserState == 1 ? Color.GREEN : Color.RED);
-			else
-				color = dispenserState == 1 ? Color.RED : Color.GREEN;
-
-
+			Color color = dispenserState == 1 ? Color.RED : Color.GREEN;
 			renderObject(plugin.getConveyorBelt(), graphics, color);
-
 		}
 
-		if (config.showBarDispenser() && plugin.getBarDispenser() != null)
+		if (plugin.isShowBarDispenser() && plugin.getBarDispenser() != null)
 		{
 			boolean hasIceGloves = hasIceGloves();
 			Color color = dispenserState == 2 && hasIceGloves ? Color.GREEN : (dispenserState == 3 ? Color.GREEN : Color.RED);
 
 			renderObject(plugin.getBarDispenser(), graphics, color);
 		}
-		if(config.showBankchest() && plugin.getBankChest() != null)
-			renderObject(plugin.getBankChest(), graphics, Color.green);
 
 		return null;
 	}
@@ -101,26 +99,6 @@ class BlastFurnaceClickBoxOverlay extends Overlay
 
 		Item glove = items[idx];
 		return glove != null && glove.getId() == ItemID.ICE_GLOVES;
-	}
-
-	private boolean hasGoldGloves()
-	{
-		ItemContainer equipmentContainer = client.getItemContainer(InventoryID.EQUIPMENT);
-		if (equipmentContainer == null)
-		{
-			return false;
-		}
-
-		Item[] items = equipmentContainer.getItems();
-		int idx = EquipmentInventorySlot.GLOVES.getSlotIdx();
-
-		if (items == null || idx >= items.length)
-		{
-			return false;
-		}
-
-		Item glove = items[idx];
-		return glove != null && glove.getId() == ItemID.GOLDSMITH_GAUNTLETS;
 	}
 
 	private void renderObject(GameObject object, Graphics2D graphics, Color color)
@@ -149,6 +127,4 @@ class BlastFurnaceClickBoxOverlay extends Overlay
 			}
 		}
 	}
-
-
 }

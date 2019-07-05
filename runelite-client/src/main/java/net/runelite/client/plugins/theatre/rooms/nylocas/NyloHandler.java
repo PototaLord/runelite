@@ -1,5 +1,17 @@
 package net.runelite.client.plugins.theatre.rooms.nylocas;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,63 +25,49 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.NpcDespawned;
 import net.runelite.api.events.NpcSpawned;
 import net.runelite.client.plugins.theatre.RoomHandler;
-import net.runelite.client.plugins.theatre.TheatreConfig;
 import net.runelite.client.plugins.theatre.TheatreConstant;
 import net.runelite.client.plugins.theatre.TheatrePlugin;
 import net.runelite.client.plugins.theatre.TheatreRoom;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-public class NyloHandler extends RoomHandler 
+public class NyloHandler extends RoomHandler
 {
 
+	public long startTime = 0L;
+	int startTick = 0;
+	ArrayList<NPC> waveSpawns = new ArrayList<NPC>();
+	ArrayList<NPC> waveAgros = new ArrayList<NPC>();
 	@Getter(AccessLevel.PUBLIC)
 	private Map<NPC, Integer> pillars = new HashMap<>();
-
 	@Getter(AccessLevel.PUBLIC)
 	private Map<NPC, Integer> spiders = new HashMap<>();
-
-	@Getter
-	@Setter
+	@Getter(AccessLevel.PACKAGE)
+	@Setter(AccessLevel.PACKAGE)
 	private int wave = 0;
-
 	private NyloOverlay overlay = null;
 	private NyloPredictor predictor = null;
-
 	private Point south = new Point(64, 41);
 	private Point west = new Point(49, 56);
 	private Point east = new Point(78, 56);
 
-	public long startTime = 0L;
-	public int startTick = 0;
-
-	public ArrayList<NPC> waveSpawns = new ArrayList<NPC>();
-	public ArrayList<NPC> waveAgros = new ArrayList<NPC>();
-
-	public NyloHandler(Client client, TheatrePlugin plugin, TheatreConfig config)
+	public NyloHandler(final Client client, final TheatrePlugin plugin)
 	{
-		super(client, plugin, config);
+		super(client, plugin);
 	}
 
 	@Override
 	public void onStart()
 	{
 		if (this.plugin.getRoom() == TheatreRoom.NYLOCAS)
+		{
 			return;
+		}
 
 		this.reset();
 
 		this.plugin.setRoom(TheatreRoom.NYLOCAS);
-		if (overlay == null && config.showNylocasAmount())
+		if (overlay == null && plugin.isShowNylocasAmount())
 		{
-			overlay = new NyloOverlay(client, plugin, config, this);
+			overlay = new NyloOverlay(client, plugin, this);
 			plugin.getOverlayManager().add(overlay);
 		}
 
@@ -101,8 +99,10 @@ public class NyloHandler extends RoomHandler
 
 		if (this.startTime != 0)
 		{
-			if (config.extraTimers())
-			this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Wave 'The Nylocas - Waves' completed! Duration: <col=ff0000>" + minutes + ":" + twoDigitString(seconds), null);
+			if (plugin.isExtraTimers())
+			{
+				this.client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Wave 'The Nylocas - Waves' completed! Duration: <col=ff0000>" + minutes + ":" + twoDigitString(seconds), null);
+			}
 		}
 		System.out.println("Stopping Nylocas Room");
 	}
@@ -127,12 +127,12 @@ public class NyloHandler extends RoomHandler
 			return;
 		}
 
-		if (overlay == null && config.showNylocasAmount())
+		if (overlay == null && plugin.isShowNylocasAmount())
 		{
-			overlay = new NyloOverlay(client, plugin, config, this);
+			overlay = new NyloOverlay(client, plugin, this);
 			plugin.getOverlayManager().add(overlay);
 		}
-		else if (overlay != null && !config.showNylocasAmount())
+		else if (overlay != null && !plugin.isShowNylocasAmount())
 		{
 			plugin.getOverlayManager().remove(overlay);
 			overlay = null;
@@ -147,19 +147,18 @@ public class NyloHandler extends RoomHandler
 		double rMod = 130.0 * health / 100.0;
 		double gMod = 255.0 * health / 100.0;
 		double bMod = 125.0 * health / 100.0;
-		Color c = new Color((int) (255 - rMod), (int) (0 + gMod), (int) (0 + bMod));
 
-		return c;
+		return new Color((int) (255 - rMod), (int) (0 + gMod), (int) (0 + bMod));
 	}
 
 	public void render(Graphics2D graphics)
 	{
-		if (config.showNyloPillarHealth())
+		if (plugin.isShowNyloPillarHealth())
 		{
 			for (NPC npc : pillars.keySet())
 			{
 				final int health = pillars.get(npc);
-				final String healthStr = String.valueOf(health) + "%";
+				final String healthStr = health + "%";
 				WorldPoint p = npc.getWorldLocation();
 				LocalPoint lp = LocalPoint.fromWorld(client, p.getX() + 1, p.getY() + 1);
 
@@ -169,7 +168,7 @@ public class NyloHandler extends RoomHandler
 			}
 		}
 
-		switch (config.showNylocasExplosions())
+		switch (plugin.getShowNylocasExplosions())
 		{
 			case TILE:
 				for (NPC npc : spiders.keySet())
@@ -201,47 +200,23 @@ public class NyloHandler extends RoomHandler
 				break;
 		}
 
-		Set<NPC> toHighlight = new HashSet<NPC>();
+		Set<NPC> toHighlight = new HashSet<>();
 
-		/**
-		if (config.highlightNyloParents()) 
+		if (plugin.isHighlightNyloAgros())
 		{
-			for (NPC npc : new ArrayList<NPC>(this.waveSpawns)) 
-			{
-				try 
-				{
-					if (npc.getHealthRatio() == 0 || npc.isDead()) 
-					{
-						this.waveSpawns.remove(npc);
-						continue;
-					}
-
-					if (!toHighlight.contains(npc))
-						toHighlight.add(npc);
-				} 
-				catch (Exception ex)
-				{
-
-				}
-			}
-		}**/
-
-		if (config.highlightNyloAgros()) 
-		{
-			for (NPC npc : new ArrayList<NPC>(this.waveAgros))
+			for (NPC npc : new ArrayList<>(this.waveAgros))
 			{
 				try
 				{
-					if (npc.getHealthRatio() == 0 || npc.isDead()) 
+					if (npc.getHealthRatio() == 0 || npc.isDead())
 					{
 						this.waveAgros.remove(npc);
 						continue;
 					}
 
-					if (!toHighlight.contains(npc))
-						toHighlight.add(npc);
-				} 
-				catch (Exception ex) 
+					toHighlight.add(npc);
+				}
+				catch (Exception ex)
 				{
 
 				}
@@ -258,58 +233,25 @@ public class NyloHandler extends RoomHandler
 				String name = npc.getName() != null ? npc.getName() : "";
 
 				if (name.contains("Hagios"))
+				{
 					color = Color.CYAN;
+				}
 				else if (name.contains("Toxobolos"))
+				{
 					color = Color.GREEN;
+				}
 				else
+				{
 					color = Color.LIGHT_GRAY;
+				}
 
 				renderPoly(graphics, color, objectClickbox);
-			} 
+			}
 			catch (Exception ex)
 			{
 
 			}
 		}
-/**
-		if (config.showNylocasSpawns() && predictor != null)
-		{
-			NyloPredictor.Wave nextWave = predictor.getNextWave();
-			if (nextWave != null)
-			{
-				TheatreConfig.NYLOCAS mark = config.highlightNyloRoles();
-
-				String southStr = predictor.getSpawnStr(NyloPredictor.Spawn.SOUTH, nextWave);
-				if (southStr != null && south != null)
-				{
-					LocalPoint lp = LocalPoint.fromScene(south.getX(), south.getY());
-					Point point = Perspective.getCanvasTextLocation(client, graphics, lp, southStr, 1);
-					Color color = mark != TheatreConfig.NYLOCAS.NONE ? (((southStr.contains("Mage") && mark == TheatreConfig.NYLOCAS.MAGE) || (southStr.contains("Range") && mark == TheatreConfig.NYLOCAS.RANGER) || (southStr.contains("Melee") && mark == TheatreConfig.NYLOCAS.MELEE)) ? Color.MAGENTA : Color.RED) : Color.RED;
-					renderTextLocation(graphics, southStr, 18, Font.BOLD, color, point);
-//					drawTile(graphics, WorldPoint.fromLocal(client, lp), new Color(0, 150, 200), 2, 150, 10);
-				}
-
-				String westStr = predictor.getSpawnStr(NyloPredictor.Spawn.WEST, nextWave);
-				if (westStr != null && west != null)
-				{
-					LocalPoint lp = LocalPoint.fromScene(west.getX(), west.getY());
-					Point point = Perspective.getCanvasTextLocation(client, graphics, lp, westStr, 1);
-					Color color = mark != TheatreConfig.NYLOCAS.NONE ? (((westStr.contains("Mage") && mark == TheatreConfig.NYLOCAS.MAGE) || (westStr.contains("Range") && mark == TheatreConfig.NYLOCAS.RANGER) || (westStr.contains("Melee") && mark == TheatreConfig.NYLOCAS.MELEE)) ? Color.MAGENTA : Color.RED) : Color.RED;
-					renderTextLocation(graphics, westStr, 18, Font.BOLD, color, point);
-//					drawTile(graphics, WorldPoint.fromLocal(client, lp), new Color(0, 150, 200), 2, 150, 10);
-				}
-
-				String eastStr = predictor.getSpawnStr(NyloPredictor.Spawn.EAST, nextWave);
-				if (eastStr != null && east != null)
-				{
-					LocalPoint lp = LocalPoint.fromScene(east.getX(), east.getY());
-					Point point = Perspective.getCanvasTextLocation(client, graphics, lp, eastStr, 1);
-					Color color = mark != TheatreConfig.NYLOCAS.NONE ? (((eastStr.contains("Mage") && mark == TheatreConfig.NYLOCAS.MAGE) || (eastStr.contains("Range") && mark == TheatreConfig.NYLOCAS.RANGER) || (eastStr.contains("Melee") && mark == TheatreConfig.NYLOCAS.MELEE)) ? Color.MAGENTA : Color.RED) : Color.RED;
-					renderTextLocation(graphics, eastStr, 18, Font.BOLD, color, point);
-//					drawTile(graphics, WorldPoint.fromLocal(client, lp), new Color(0, 150, 200), 2, 150, 10);
-				}
-			}
-		}**/
 	}
 
 	public void onNpcSpawned(NpcSpawned event)
@@ -351,15 +293,9 @@ public class NyloHandler extends RoomHandler
 		NPC npc = event.getNpc();
 		int id = npc.getId();
 
-		if (this.waveSpawns.contains(npc))
-		{
-			this.waveSpawns.remove(npc);
-		}
+		this.waveSpawns.remove(npc);
 
-		if (this.waveAgros.contains(npc))
-		{
-			this.waveAgros.remove(npc);
-		}
+		this.waveAgros.remove(npc);
 
 		if (id == TheatreConstant.NPC_ID_NYLOCAS_PILLAR)
 		{
@@ -393,7 +329,7 @@ public class NyloHandler extends RoomHandler
 		if (plugin.getRoom() != TheatreRoom.NYLOCAS)
 		{
 			return;
-		} 
+		}
 		else
 		{
 			boolean findPillar = false;

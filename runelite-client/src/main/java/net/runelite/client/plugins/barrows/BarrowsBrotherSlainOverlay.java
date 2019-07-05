@@ -28,6 +28,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.runelite.api.Client;
 import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import net.runelite.api.Varbits;
@@ -43,13 +44,14 @@ import net.runelite.client.ui.overlay.components.table.TableAlignment;
 import net.runelite.client.ui.overlay.components.table.TableComponent;
 import net.runelite.client.util.ColorUtil;
 
+@Singleton
 public class BarrowsBrotherSlainOverlay extends Overlay
 {
 	private final Client client;
 	private final PanelComponent panelComponent = new PanelComponent();
 
 	@Inject
-	private BarrowsBrotherSlainOverlay(BarrowsPlugin plugin, Client client)
+	private BarrowsBrotherSlainOverlay(final BarrowsPlugin plugin, final Client client)
 	{
 		super(plugin);
 		setPosition(OverlayPosition.TOP_LEFT);
@@ -84,7 +86,7 @@ public class BarrowsBrotherSlainOverlay extends Overlay
 		{
 			final boolean brotherSlain = client.getVar(brother.getKilledVarbit()) > 0;
 			String slain = brotherSlain ? "\u2713" : "\u2717";
-			tableComponent.addRow(brother.getName(), ColorUtil.prependColorTag(slain, brotherSlain ? Color.RED : Color.GREEN));
+			tableComponent.addRow(brother.getName(), ColorUtil.prependColorTag(slain, brotherSlain ? Color.GREEN : Color.RED));
 		}
 
 		float rewardPercent = client.getVar(Varbits.BARROWS_REWARD_POTENTIAL) / 10.0f;

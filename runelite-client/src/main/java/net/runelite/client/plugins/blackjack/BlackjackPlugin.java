@@ -26,6 +26,7 @@
  */
 package net.runelite.client.plugins.blackjack;
 
+import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -34,12 +35,14 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.Varbits;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.ConfigChanged;
 import net.runelite.api.events.MenuEntryAdded;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.menus.MenuManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.PluginType;
+import net.runelite.client.util.MenuUtil;
 import net.runelite.client.util.Text;
 import org.apache.commons.lang3.RandomUtils;
 
@@ -53,39 +56,61 @@ import org.apache.commons.lang3.RandomUtils;
 		type = PluginType.SKILLING,
 		enabledByDefault = false
 )
-
 @Singleton
 @Slf4j
 public class BlackjackPlugin extends Plugin
 {
+	private static final String SUCCESS_BLACKJACK = "You smack the bandit over the head and render them unconscious.";
+	private static final String FAILED_BLACKJACK = "Your blow only glances off the bandit's head.";
+	private static final int POLLNIVNEACH_REGION = 13358;
+	private long nextKnockOutTick = 0;
 	@Inject
 	private Client client;
-
 	@Inject
-	private MenuManager menuManager;
+	private BlackjackConfig config;
 
-	private static final int POLLNIVNEACH_REGION = 13358;
-	private boolean isKnockedOut = false;
-	private long nextKnockOutTick = 0;
+	private boolean pickpocketOnAggro;
+
+	@Provides
+	BlackjackConfig getConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(BlackjackConfig.class);
+	}
+
+	@Override
+	protected void startUp() throws Exception
+	{
+		this.pickpocketOnAggro = config.pickpocketOnAggro();
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (event.getGroup().equals("blackjack"))
+		{
+			this.pickpocketOnAggro = config.pickpocketOnAggro();
+		}
+	}
 
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		if (client.getGameState() != GameState.LOGGED_IN)
+		if (client.getGameState() != GameState.LOGGED_IN ||
+				client.getVar(Varbits.QUEST_THE_FEUD) < 13 ||
+				client.getLocalPlayer().getWorldLocation().getRegionID() != POLLNIVNEACH_REGION)
 		{
 			return;
 		}
 
 		String option = Text.removeTags(event.getOption().toLowerCase());
 		String target = Text.removeTags(event.getTarget().toLowerCase());
-		if (isKnockedOut && nextKnockOutTick >= client.getTickCount())
+		if (nextKnockOutTick >= client.getTickCount())
 		{
-
-			menuManager.addSwap("", target, "pickpocket", target, false, false);
+			MenuUtil.swap(client, "pickpocket", option, target);
 		}
 		else
 		{
-			menuManager.addSwap("", target, "knock-out", target, false, false);
+			MenuUtil.swap(client, "knock-out", option, target);
 		}
 	}
 
@@ -94,9 +119,8 @@ public class BlackjackPlugin extends Plugin
 	{
 		if (event.getType() == ChatMessageType.SPAM)
 		{
-			if (event.getMessage().equals("You smack the bandit over the head and render them unconscious."))
+			if (event.getMessage().equals(SUCCESS_BLACKJACK) ^ (event.getMessage().equals(FAILED_BLACKJACK) && this.pickpocketOnAggro))
 			{
-				isKnockedOut = true;
 				nextKnockOutTick = client.getTickCount() + RandomUtils.nextInt(3, 4);
 			}
 		}

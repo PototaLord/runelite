@@ -8,28 +8,24 @@
 
 package net.runelite.client.plugins.theatre;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import javax.inject.Inject;
-import net.runelite.api.*;
+import javax.inject.Singleton;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
 
-public class TheatreOverlay extends Overlay 
+@Singleton
+public class TheatreOverlay extends Overlay
 {
-
-	private final Client client;
 	private final TheatrePlugin plugin;
-	private final TheatreConfig config;
 
 	@Inject
-	private TheatreOverlay(Client client, TheatrePlugin plugin, TheatreConfig config)
+	private TheatreOverlay(final TheatrePlugin plugin)
 	{
-		this.client = client;
 		this.plugin = plugin;
-		this.config = config;
 
 		setPosition(OverlayPosition.DYNAMIC);
 		setPriority(OverlayPriority.HIGH);

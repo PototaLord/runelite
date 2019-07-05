@@ -24,22 +24,23 @@
  */
 package net.runelite.client.plugins.blastfurnace;
 
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.runelite.api.Client;
+import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.Overlay;
+import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
 import net.runelite.client.ui.overlay.OverlayMenuEntry;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.ComponentOrientation;
 import net.runelite.client.ui.overlay.components.ImageComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
 
-import javax.inject.Inject;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-
-import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
-import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
-
+@Singleton
 class BlastFurnaceOverlay extends Overlay
 {
 	private final Client client;
@@ -50,7 +51,7 @@ class BlastFurnaceOverlay extends Overlay
 	private ItemManager itemManager;
 
 	@Inject
-	BlastFurnaceOverlay(Client client, BlastFurnacePlugin plugin)
+	BlastFurnaceOverlay(final Client client, final BlastFurnacePlugin plugin)
 	{
 		super(plugin);
 		this.plugin = plugin;

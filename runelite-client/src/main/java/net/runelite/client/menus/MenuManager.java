@@ -27,28 +27,36 @@ package net.runelite.client.menus;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import lombok.AllArgsConstructor;
+
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
-import static net.runelite.api.MenuAction.GAME_OBJECT_FIRST_OPTION;
-import static net.runelite.api.MenuAction.WIDGET_DEFAULT;
+import static net.runelite.api.MenuAction.MENU_ACTION_DEPRIORITIZE_OFFSET;
 import net.runelite.api.MenuEntry;
 import net.runelite.api.NPCDefinition;
-import net.runelite.api.events.ClientTick;
+import net.runelite.api.events.BeforeRender;
 import net.runelite.api.events.MenuEntryAdded;
+import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NpcActionChanged;
 import net.runelite.api.events.PlayerMenuOptionClicked;
@@ -70,19 +78,6 @@ public class MenuManager
 	private static final int IDX_UPPER = 8;
 	static final Pattern LEVEL_PATTERN = Pattern.compile("\\(level-[0-9]*\\)");
 
-	private static MenuEntry CANCEL()
-	{
-		MenuEntry cancel = new MenuEntry();
-		cancel.setOption("Cancel");
-		cancel.setTarget("");
-		cancel.setIdentifier(0);
-		cancel.setType(MenuAction.CANCEL.getId());
-		cancel.setParam0(0);
-		cancel.setParam1(0);
-
-		return cancel;
-	}
-
 	private final Client client;
 	private final EventBus eventBus;
 
@@ -92,12 +87,16 @@ public class MenuManager
 	private final Multimap<Integer, WidgetMenuOption> managedMenuOptions = HashMultimap.create();
 	private final Set<String> npcMenuOptions = new HashSet<>();
 
-	private final Set<ComparableEntry> priorityEntries = new HashSet<>();
-	private final Set<MenuEntry> currentPriorityEntries = new HashSet<>();
-	private final Set<ComparableEntry> hiddenEntries = new HashSet<>();
+	private final HashSet<ComparableEntry> priorityEntries = new HashSet<>();
+	private HashMap<MenuEntry, ComparableEntry> currentPriorityEntries = new HashMap<>();
+	private final ConcurrentHashMap<MenuEntry, ComparableEntry> safeCurrentPriorityEntries = new ConcurrentHashMap<>();
+	private final HashSet<ComparableEntry> hiddenEntries = new HashSet<>();
+	private HashSet<MenuEntry> currentHiddenEntries = new HashSet<>();
+	private final HashMap<ComparableEntry, ComparableEntry> swaps = new HashMap<>();
 
-	private final Map<ComparableEntry, ComparableEntry> swaps = new HashMap<>();
-	private EntryTypeMapping originalType;
+	private final LinkedHashSet<MenuEntry> entries = Sets.newLinkedHashSet();
+
+	private MenuEntry leftClickEntry = null;
 
 	@Inject
 	private MenuManager(Client client, EventBus eventBus)
@@ -144,6 +143,117 @@ public class MenuManager
 	}
 
 	@Subscribe
+	public void onMenuOpened(MenuOpened event)
+	{
+		currentPriorityEntries.clear();
+
+		// Need to reorder the list to normal, then rebuild with swaps
+		MenuEntry[] oldEntries = event.getMenuEntries();
+
+		leftClickEntry = null;
+
+		client.sortMenuEntries();
+
+		List<MenuEntry> newEntries = Lists.newArrayList(oldEntries);
+
+		boolean shouldDeprioritize = false;
+
+		prioritizer: for (MenuEntry entry : oldEntries)
+		{
+			// Remove hidden entries from menus
+			for (ComparableEntry p : hiddenEntries)
+			{
+				if (p.matches(entry))
+				{
+					newEntries.remove(entry);
+					continue prioritizer;
+				}
+			}
+
+			for (ComparableEntry p : priorityEntries)
+			{
+				// Create list of priority entries, and remove from menus
+				if (p.matches(entry))
+				{
+					// Other entries need to be deprioritized if their types are lower than 1000
+					if (entry.getType() >= 1000 && !shouldDeprioritize)
+					{
+						shouldDeprioritize = true;
+					}
+					currentPriorityEntries.put(entry, p);
+					newEntries.remove(entry);
+					continue prioritizer;
+				}
+			}
+
+			if (newEntries.size() > 0)
+			{
+				// Swap first matching entry to top
+				for (ComparableEntry src : swaps.keySet())
+				{
+					if (!src.matches(entry))
+					{
+						continue;
+					}
+
+					MenuEntry swapFrom = null;
+
+					ComparableEntry from = swaps.get(src);
+
+					for (MenuEntry e : newEntries)
+					{
+						if (from.matches(e))
+						{
+							swapFrom = e;
+							break;
+						}
+					}
+
+					// Do not need to swap with itself or if the swapFrom is already the first entry
+					if (swapFrom != null && swapFrom != entry && swapFrom != Iterables.getLast(newEntries))
+					{
+						// Deprioritize entries if the swaps are not in similar type groups
+						if ((swapFrom.getType() >= 1000 && entry.getType() < 1000) || (entry.getType() >= 1000 && swapFrom.getType() < 1000) && !shouldDeprioritize)
+						{
+							shouldDeprioritize = true;
+						}
+
+						int indexFrom = newEntries.indexOf(swapFrom);
+						int indexTo = newEntries.indexOf(entry);
+
+						Collections.swap(newEntries, indexFrom, indexTo);
+					}
+				}
+			}
+		}
+
+		if (shouldDeprioritize)
+		{
+			for (MenuEntry entry : newEntries)
+			{
+				if (entry.getType() <= MENU_ACTION_DEPRIORITIZE_OFFSET)
+				{
+					entry.setType(entry.getType() + MENU_ACTION_DEPRIORITIZE_OFFSET);
+				}
+			}
+		}
+
+		if (!currentPriorityEntries.isEmpty())
+		{
+			newEntries.addAll(currentPriorityEntries.entrySet().stream()
+				.sorted(Comparator.comparingInt(e -> e.getValue().getPriority()))
+				.map(Map.Entry::getKey)
+				.collect(Collectors.toList()));
+		}
+
+		MenuEntry[] arrayEntries = newEntries.toArray(new MenuEntry[0]);
+
+		// Need to set the event entries to prevent conflicts
+		event.setMenuEntries(arrayEntries);
+		client.setMenuEntries(arrayEntries);
+	}
+
+	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
 		int widgetId = event.getActionParam1();
@@ -168,113 +278,50 @@ public class MenuManager
 	}
 
 	@Subscribe
-	private void onClientTick(ClientTick event)
+	public void onBeforeRender(BeforeRender event)
 	{
-		originalType = null;
-		currentPriorityEntries.clear();
-		client.sortMenuEntries();
+		leftClickEntry = null;
 
-		MenuEntry[] oldEntries = client.getMenuEntries();
-		List<MenuEntry> newEntries = Lists.newArrayList(oldEntries);
-
-		for (MenuEntry entry : oldEntries)
+		if (client.isMenuOpen())
 		{
-			for (ComparableEntry p : priorityEntries)
+			return;
+		}
+
+		entries.clear();
+		entries.addAll(Arrays.asList(client.getMenuEntries()));
+
+		if (entries.size() < 2)
+		{
+			return;
+		}
+
+		if (!hiddenEntries.isEmpty())
+		{
+			currentHiddenEntries.clear();
+			indexHiddenEntries(entries);
+
+			if (!currentHiddenEntries.isEmpty())
 			{
-				if (p.matches(entry))
-				{
-					currentPriorityEntries.add(entry);
-				}
-			}
-
-			// If there are entries we want to prioritize, we have to remove the rest
-			if (!currentPriorityEntries.isEmpty() && !client.isMenuOpen())
-			{
-				newEntries.retainAll(currentPriorityEntries);
-
-				// This is because players existing changes walk-here target
-				// so without this we lose track of em
-				if (newEntries.size() != currentPriorityEntries.size())
-				{
-					for (MenuEntry e : currentPriorityEntries)
-					{
-						if (newEntries.contains(e))
-						{
-							continue;
-						}
-
-						for (MenuEntry e2 : client.getMenuEntries())
-						{
-							if (e.getType() == e2.getType())
-							{
-								e.setTarget(e2.getTarget());
-								newEntries.add(e);
-							}
-						}
-					}
-				}
-			}
-
-			boolean isHidden = false;
-			for (ComparableEntry p : hiddenEntries)
-			{
-				if (p.matches(entry))
-				{
-					isHidden = true;
-					break;
-				}
-			}
-
-			if (isHidden)
-			{
-				newEntries.remove(entry);
+				entries.removeAll(currentHiddenEntries);
 			}
 		}
 
-		if (!currentPriorityEntries.isEmpty() && !client.isMenuOpen())
+		if (!priorityEntries.isEmpty())
 		{
-			newEntries.add(0, CANCEL());
+			indexPriorityEntries(entries);
 		}
 
-		MenuEntry leftClickEntry = newEntries.get(newEntries.size() - 1);
-
-		for (ComparableEntry src : swaps.keySet())
+		if (leftClickEntry == null && !swaps.isEmpty())
 		{
-			if (!src.matches(leftClickEntry))
-			{
-				continue;
-			}
-
-			ComparableEntry tgt = swaps.get(src);
-
-			for (int i = newEntries.size() - 2; i > 0; i--)
-			{
-				MenuEntry e = newEntries.get(i);
-
-				if (tgt.matches(e))
-				{
-					newEntries.set(newEntries.size() - 1, e);
-					newEntries.set(i, leftClickEntry);
-
-					int type = e.getType();
-
-					if (type >= 1000)
-					{
-						int newType = getLeftClickType(type);
-						if (newType != -1 && newType != type)
-						{
-							MenuEntry original = MenuEntry.copy(e);
-							e.setType(newType);
-							originalType = new EntryTypeMapping(new ComparableEntry(leftClickEntry), original);
-						}
-					}
-
-					break;
-				}
-			}
+			indexSwapEntries(entries);
 		}
 
-		client.setMenuEntries(newEntries.toArray(new MenuEntry[0]));
+		if (leftClickEntry != null)
+		{
+			entries.remove(leftClickEntry);
+			entries.add(leftClickEntry);
+			client.setMenuEntries(entries.toArray(new MenuEntry[0]));
+		}
 	}
 
 	public void addPlayerMenuItem(String menuText)
@@ -338,24 +385,6 @@ public class MenuManager
 		}
 	}
 
-	private int getLeftClickType(int oldType)
-	{
-		if (oldType > 2000)
-		{
-			oldType -= 2000;
-		}
-
-		switch (MenuAction.of(oldType))
-		{
-			case GAME_OBJECT_FIFTH_OPTION:
-				return GAME_OBJECT_FIRST_OPTION.getId();
-			case EXAMINE_ITEM_BANK_EQ:
-				return WIDGET_DEFAULT.getId();
-			default:
-				return oldType;
-		}
-	}
-
 	private void addNpcOption(NPCDefinition composition, String npcOption)
 	{
 		String[] actions = composition.getActions();
@@ -399,21 +428,10 @@ public class MenuManager
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		// Type is changed in check
-		if (originalType != null && originalType.check(event))
+		if (!client.isMenuOpen() && leftClickEntry != null)
 		{
-			event.consume();
-
-			client.invokeMenuAction(
-				event.getActionParam0(),
-				event.getActionParam1(),
-				event.getType(),
-				event.getIdentifier(),
-				"do not edit",
-				event.getTarget(),
-				client.getMouseCanvasPosition().getX(),
-				client.getMouseCanvasPosition().getY()
-			);
+			event.setMenuEntry(leftClickEntry);
+			leftClickEntry = null;
 		}
 
 		if (event.getMenuAction() != MenuAction.RUNELITE)
@@ -485,7 +503,7 @@ public class MenuManager
 	/**
 	 * Adds to the set of menu entries which when present, will remove all entries except for this one
 	 */
-	public void addPriorityEntry(String option, String target)
+	public ComparableEntry addPriorityEntry(String option, String target)
 	{
 		option = Text.standardize(option);
 		target = Text.standardize(target);
@@ -493,6 +511,8 @@ public class MenuManager
 		ComparableEntry entry = new ComparableEntry(option, target);
 
 		priorityEntries.add(entry);
+
+		return entry;
 	}
 
 	public void removePriorityEntry(String option, String target)
@@ -510,13 +530,15 @@ public class MenuManager
 	 * Adds to the set of menu entries which when present, will remove all entries except for this one
 	 * This method will add one with strict option, but not-strict target (contains for target, equals for option)
 	 */
-	public void addPriorityEntry(String option)
+	public ComparableEntry addPriorityEntry(String option)
 	{
 		option = Text.standardize(option);
 
 		ComparableEntry entry = new ComparableEntry(option, "", false);
 
 		priorityEntries.add(entry);
+
+		return entry;
 	}
 
 	public void removePriorityEntry(String option)
@@ -740,23 +762,57 @@ public class MenuManager
 		hiddenEntries.remove(entry);
 	}
 
-	@AllArgsConstructor
-	private class EntryTypeMapping
+	private void indexHiddenEntries(Set<MenuEntry> entries)
 	{
-		private final ComparableEntry comparable;
-		private final MenuEntry target;
-
-		private boolean check(MenuOptionClicked event)
+		currentHiddenEntries = entries.parallelStream().filter(entry ->
 		{
-			MenuEntry entry = event.getMenuEntry();
-
-			if (event.getTarget().equals("do not edit") || !comparable.matches(entry))
+			for (ComparableEntry p : hiddenEntries)
 			{
-				return false;
+				if (p.matches(entry))
+				{
+					return true;
+				}
 			}
+			return false;
+		}).collect(Collectors.toCollection(HashSet::new));
+	}
 
-			event.setMenuEntry(target);
-			return true;
-		}
+	// This could use some optimization
+	private void indexPriorityEntries(Set<MenuEntry> entries)
+	{
+		safeCurrentPriorityEntries.clear();
+		entries.parallelStream().forEach(entry ->
+		{
+			for (ComparableEntry p : priorityEntries)
+			{
+				if (p.matches(entry))
+				{
+					safeCurrentPriorityEntries.put(entry, p);
+					break;
+				}
+			}
+		});
+
+		leftClickEntry = Iterables.getLast(safeCurrentPriorityEntries.entrySet().stream()
+			.sorted(Comparator.comparingInt(e -> e.getValue().getPriority()))
+			.map(Map.Entry::getKey)
+			.collect(Collectors.toList()));
+	}
+
+	private void indexSwapEntries(Set<MenuEntry>  entries)
+	{
+		MenuEntry first = Iterables.getLast(entries);
+
+		leftClickEntry = entries.parallelStream().filter(entry ->
+		{
+			for (Map.Entry<ComparableEntry, ComparableEntry> p : swaps.entrySet())
+			{
+				if (p.getKey().matches(first) && p.getValue().matches(entry))
+				{
+					return true;
+				}
+			}
+			return false;
+		}).findFirst().orElse(null);
 	}
 }

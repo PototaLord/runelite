@@ -37,6 +37,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import javax.annotation.Nullable;
+import javax.inject.Singleton;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -54,7 +55,8 @@ import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.StackFormatter;
 
-public class GrandExchangeOfferSlot extends JPanel
+@Singleton
+class GrandExchangeOfferSlot extends JPanel
 {
 	private static final String FACE_CARD = "FACE_CARD";
 	private static final String DETAILS_CARD = "DETAILS_CARD";
@@ -131,11 +133,11 @@ public class GrandExchangeOfferSlot extends JPanel
 
 		itemName.setForeground(Color.WHITE);
 		itemName.setVerticalAlignment(JLabel.BOTTOM);
-		itemName.setFont(FontManager.getRunescapeSmallFont());
+		itemName.setFont(FontManager.getSmallFont(getFont()));
 
 		offerInfo.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 		offerInfo.setVerticalAlignment(JLabel.TOP);
-		offerInfo.setFont(FontManager.getRunescapeSmallFont());
+		offerInfo.setFont(FontManager.getSmallFont(getFont()));
 
 		JLabel switchFaceViewIcon = new JLabel();
 		switchFaceViewIcon.setIcon(RIGHT_ARROW_ICON);
@@ -162,11 +164,11 @@ public class GrandExchangeOfferSlot extends JPanel
 
 		itemPrice.setForeground(Color.WHITE);
 		itemPrice.setVerticalAlignment(JLabel.BOTTOM);
-		itemPrice.setFont(FontManager.getRunescapeSmallFont());
+		itemPrice.setFont(FontManager.getSmallFont(getFont()));
 
 		offerSpent.setForeground(Color.WHITE);
 		offerSpent.setVerticalAlignment(JLabel.TOP);
-		offerSpent.setFont(FontManager.getRunescapeSmallFont());
+		offerSpent.setFont(FontManager.getSmallFont(getFont()));
 
 		JLabel switchDetailsViewIcon = new JLabel();
 		switchDetailsViewIcon.setIcon(LEFT_ARROW_ICON);

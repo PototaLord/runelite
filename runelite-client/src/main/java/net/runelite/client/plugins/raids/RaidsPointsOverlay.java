@@ -29,6 +29,7 @@ import java.awt.Graphics2D;
 import java.text.NumberFormat;
 import java.util.Locale;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import net.runelite.api.Client;
 import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import net.runelite.api.Varbits;
@@ -42,6 +43,7 @@ import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.components.table.TableAlignment;
 import net.runelite.client.ui.overlay.components.table.TableComponent;
 
+@Singleton
 public class RaidsPointsOverlay extends Overlay
 {
 	@Inject
@@ -61,7 +63,7 @@ public class RaidsPointsOverlay extends Overlay
 	}
 
 	@Inject
-	private RaidsPointsOverlay(RaidsPlugin plugin)
+	private RaidsPointsOverlay(final RaidsPlugin plugin)
 	{
 		super(plugin);
 		setPosition(OverlayPosition.TOP_RIGHT);

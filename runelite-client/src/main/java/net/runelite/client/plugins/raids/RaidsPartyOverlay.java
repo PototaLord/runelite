@@ -24,22 +24,19 @@
  */
 package net.runelite.client.plugins.raids;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Color;
 import java.util.Set;
 import javax.inject.Inject;
-
-
+import javax.inject.Singleton;
+import net.runelite.api.ClanMember;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
 import net.runelite.api.VarPlayer;
 import net.runelite.api.Varbits;
-import net.runelite.api.ClanMember;
 import net.runelite.client.ui.overlay.Overlay;
-
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
-
 import net.runelite.client.ui.overlay.OverlayMenuEntry;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayPriority;
@@ -48,22 +45,20 @@ import net.runelite.client.ui.overlay.components.table.TableAlignment;
 import net.runelite.client.ui.overlay.components.table.TableComponent;
 import net.runelite.client.util.ColorUtil;
 
+@Singleton
 public class RaidsPartyOverlay extends Overlay
 {
-	public static final String PARTY_OVERLAY_RESET = "Reset missing";
-	public static final String PARTY_OVERLAY_REFRESH = "Refresh party";
+	static final String PARTY_OVERLAY_RESET = "Reset missing";
+	static final String PARTY_OVERLAY_REFRESH = "Refresh party";
 	private final PanelComponent panelComponent = new PanelComponent();
-
+	private final PanelComponent panel = new PanelComponent();
 	@Inject
 	private Client client;
-
 	@Inject
 	private RaidsPlugin plugin;
 
-	private final PanelComponent panel = new PanelComponent();
-
 	@Inject
-	private RaidsPartyOverlay(RaidsPlugin plugin)
+	private RaidsPartyOverlay(final RaidsPlugin plugin)
 	{
 		super(plugin);
 		setPosition(OverlayPosition.TOP_RIGHT);
@@ -95,7 +90,6 @@ public class RaidsPartyOverlay extends Overlay
 
 		TableComponent tableComponent = new TableComponent();
 		tableComponent.setColumnAlignments(TableAlignment.LEFT, TableAlignment.RIGHT);
-
 
 
 		String partyCountString;

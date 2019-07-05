@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Woox <https://github.com/wooxsolo>
+ * Copyright (c) 2019, GeChallengeM <https://github.com/GeChallengeM>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,19 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api.events;
+package net.runelite.client.plugins.npcstatus;
 
-import lombok.Value;
-import net.runelite.api.NPC;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
 
-/**
- * Fires after the composition of an {@link NPC} changes.
- */
-@Value
-public class NpcCompositionChanged
+@ConfigGroup("npcstatus")
+public interface NpcStatusConfig extends Config
 {
-	/**
-	 * The NPC of which the composition changed.
-	 */
-	private final NPC npc;
+	@ConfigItem(
+		keyName = "AttackRange",
+		name = "NPC Attack range",
+		description = "The attack range of the NPC"
+	)
+	default int getRange()
+	{
+		return 1;
+	}
 }

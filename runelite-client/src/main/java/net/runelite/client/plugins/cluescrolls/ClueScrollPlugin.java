@@ -36,9 +36,12 @@ import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -98,7 +101,6 @@ import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.ui.overlay.components.TextComponent;
 import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
 import net.runelite.client.util.ImageUtil;
-import net.runelite.client.util.ItemUtil;
 import net.runelite.client.util.Text;
 
 @PluginDescriptor(
@@ -107,6 +109,7 @@ import net.runelite.client.util.Text;
 	tags = {"arrow", "hints", "world", "map", "coordinates", "emotes"}
 )
 @Slf4j
+@Singleton
 public class ClueScrollPlugin extends Plugin
 {
 	private static final Color HIGHLIGHT_BORDER_COLOR = Color.ORANGE;
@@ -163,6 +166,8 @@ public class ClueScrollPlugin extends Plugin
 
 	private final TextComponent textComponent = new TextComponent();
 
+	private boolean displayHintArrows;
+
 	@Provides
 	ClueScrollConfig getConfig(ConfigManager configManager)
 	{
@@ -178,6 +183,7 @@ public class ClueScrollPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
+		this.displayHintArrows = config.displayHintArrows();
 		overlayManager.add(clueScrollOverlay);
 		overlayManager.add(clueScrollEmoteOverlay);
 		overlayManager.add(clueScrollWorldOverlay);
@@ -225,9 +231,9 @@ public class ClueScrollPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(final MenuOptionClicked event)
 	{
-		if (event.getOption() != null && event.getOption().equals("Read"))
+		if (event.getMenuAction() != null && event.getMenuAction().equals("Read"))
 		{
-			final ItemDefinition itemComposition = itemManager.getItemDefinition(event.getIdentifier());
+			final ItemDefinition itemComposition = itemManager.getItemDefinition(event.hashCode());
 
 			if (itemComposition != null && itemComposition.getName().startsWith("Clue scroll"))
 			{
@@ -256,8 +262,10 @@ public class ClueScrollPlugin extends Plugin
 		// Check if item was removed from inventory
 		if (clue != null && clueItemId != null)
 		{
+			final Stream<Item> items = Arrays.stream(event.getItemContainer().getItems());
+
 			// Check if clue was removed from inventory
-			if (!ItemUtil.containsItemId(event.getItemContainer().getItems(), clueItemId))
+			if (items.noneMatch(item -> itemManager.getItemDefinition(item.getId()).getId() == clueItemId))
 			{
 				resetClue(true);
 			}
@@ -271,7 +279,7 @@ public class ClueScrollPlugin extends Plugin
 				worldMapPointsSet = false;
 				npcsToMark.clear();
 
-				if (config.displayHintArrows())
+				if (this.displayHintArrows)
 				{
 					client.clearHintArrow();
 				}
@@ -310,9 +318,13 @@ public class ClueScrollPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
-		if (event.getGroup().equals("cluescroll") && !config.displayHintArrows())
+		if (event.getGroup().equals("cluescroll"))
 		{
-			client.clearHintArrow();
+			this.displayHintArrows = config.displayHintArrows();
+			if (!this.displayHintArrows)
+			{
+				client.clearHintArrow();
+			}
 		}
 	}
 
@@ -363,7 +375,7 @@ public class ClueScrollPlugin extends Plugin
 			if (location != null)
 			{
 				// Only set the location hint arrow if we do not already have more accurate location
-				if (config.displayHintArrows()
+				if (this.displayHintArrows
 					&& (client.getHintArrowNpc() == null
 					|| !npcsToMark.contains(client.getHintArrowNpc())))
 				{
@@ -452,7 +464,7 @@ public class ClueScrollPlugin extends Plugin
 		worldMapPointsSet = false;
 		npcsToMark.clear();
 
-		if (config.displayHintArrows())
+		if (this.displayHintArrows)
 		{
 			client.clearHintArrow();
 		}
@@ -695,7 +707,7 @@ public class ClueScrollPlugin extends Plugin
 			}
 		}
 
-		if (!npcsToMark.isEmpty() && config.displayHintArrows())
+		if (!npcsToMark.isEmpty() && this.displayHintArrows)
 		{
 			// Always set hint arrow to first seen NPC
 			client.setHintArrow(npcsToMark.get(0));
@@ -761,7 +773,7 @@ public class ClueScrollPlugin extends Plugin
 		textComponent.render(graphics);
 	}
 
-	void scrollToWidget(WidgetInfo list, WidgetInfo scrollbar, Widget... toHighlight)
+	void scrollToWidget(WidgetInfo list, WidgetInfo scrollbar, Widget ... toHighlight)
 	{
 		final Widget parent = client.getWidget(list);
 		int averageCentralY = 0;
