@@ -80,7 +80,8 @@ public class WorldMapCacheName {
       signature = "(Ljava/lang/String;ZZI)V",
       garbageValue = "1532180466"
    )
-   public static void method635(String var0, boolean var1, boolean var2) {
+   @Export("openURL")
+   public static void openURL(String var0, boolean var1, boolean var2) {
       if (var1) {
          if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Action.BROWSE)) {
             try {
@@ -154,7 +155,7 @@ public class WorldMapCacheName {
          int var2 = var0.x >> 7;
          int var3 = var0.y >> 7;
          if (var2 >= 0 && var2 < 104 && var3 >= 0 && var3 < 104) {
-            long var4 = FontName.method5637(0, 0, 0, false, var0.index);
+            long var4 = FontName.calculateTag(0, 0, 0, false, var0.index);
             if (var0.model0 != null && Client.cycle >= var0.animationCycleStart && Client.cycle < var0.animationCycleEnd) {
                var0.isUnanimated = false;
                var0.tileHeight = class32.getTileHeight(var0.x, var0.y, SoundSystem.plane);

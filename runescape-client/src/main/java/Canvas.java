@@ -10,6 +10,7 @@ import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
+import net.runelite.rs.ScriptOpcodes;
 
 @ObfuscatedName("ao")
 @Implements("Canvas")
@@ -118,7 +119,7 @@ public final class Canvas extends java.awt.Canvas {
       int var3;
       int var4;
       Widget var6;
-      if (var0 == 100) {
+      if (var0 == ScriptOpcodes.CC_CREATE) {
          RouteStrategy.Interpreter_intStackSize -= 3;
          var3 = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize];
          var4 = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 1];
@@ -162,19 +163,19 @@ public final class Canvas extends java.awt.Canvas {
          }
       } else {
          Widget var5;
-         if (var0 == 101) {
+         if (var0 == ScriptOpcodes.CC_DELETE) {
             var5 = var2 ? WorldMapIcon1.field1030 : class12.field1111;
             var6 = Huffman.getWidget(var5.id);
             var6.children[var5.childIndex] = null;
             class22.method295(var6);
             return 1;
-         } else if (var0 == 102) {
+		 } else if (var0 == ScriptOpcodes.CC_DELETEALL) {
             var5 = Huffman.getWidget(Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize]);
             var5.children = null;
             class22.method295(var5);
             return 1;
-         } else if (var0 != 200) {
-            if (var0 == 201) {
+         } else if (var0 != ScriptOpcodes.CC_FIND) {
+            if (var0 == ScriptOpcodes.IF_FIND) {
                var5 = Huffman.getWidget(Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize]);
                if (var5 != null) {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = 1;
@@ -235,27 +236,27 @@ public final class Canvas extends java.awt.Canvas {
       garbageValue = "-1032035944"
    )
    static final void method855() {
-      for (class68 var0 = (class68)Client.field214.last(); var0 != null; var0 = (class68)Client.field214.previous()) {
-         if (var0.field910 > 0) {
-            --var0.field910;
+      for (PendingSpawn var0 = (PendingSpawn)Client.pendingSpawns.last(); var0 != null; var0 = (PendingSpawn)Client.pendingSpawns.previous()) {
+         if (var0.hitpoints > 0) {
+            --var0.hitpoints;
          }
 
-         if (var0.field910 == 0) {
+         if (var0.hitpoints == 0) {
             if (var0.field903 < 0 || VarbitDefinition.method4910(var0.field903, var0.field905)) {
-               ParamKeyDefinition.method4933(var0.field911, var0.field906, var0.field913, var0.field901, var0.field903, var0.field904, var0.field905);
+               ParamKeyDefinition.method4933(var0.level, var0.type, var0.x, var0.y, var0.field903, var0.field904, var0.field905);
                var0.remove();
             }
          } else {
-            if (var0.field909 > 0) {
-               --var0.field909;
+            if (var0.delay > 0) {
+               --var0.delay;
             }
 
-            if (var0.field909 == 0 && var0.field913 >= 1 && var0.field901 >= 1 && var0.field913 <= 102 && var0.field901 <= 102 && (var0.field899 < 0 || VarbitDefinition.method4910(var0.field899, var0.field908))) {
-               ParamKeyDefinition.method4933(var0.field911, var0.field906, var0.field913, var0.field901, var0.field899, var0.field907, var0.field908);
-               var0.field909 = -1;
-               if (var0.field903 == var0.field899 && var0.field903 == -1) {
+            if (var0.delay == 0 && var0.x >= 1 && var0.y >= 1 && var0.x <= 102 && var0.y <= 102 && (var0.id < 0 || VarbitDefinition.method4910(var0.id, var0.field908))) {
+               ParamKeyDefinition.method4933(var0.level, var0.type, var0.x, var0.y, var0.id, var0.orientation, var0.field908);
+               var0.delay = -1;
+               if (var0.field903 == var0.id && var0.field903 == -1) {
                   var0.remove();
-               } else if (var0.field899 == var0.field903 && var0.field904 == var0.field907 && var0.field908 == var0.field905) {
+               } else if (var0.id == var0.field903 && var0.field904 == var0.orientation && var0.field908 == var0.field905) {
                   var0.remove();
                }
             }

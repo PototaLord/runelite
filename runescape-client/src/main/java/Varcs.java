@@ -261,7 +261,6 @@ public class Varcs {
    void read() {
       AccessFile var1 = this.getPreferencesFile(false);
 
-      label225: {
          try {
             byte[] var2 = new byte[(int)var1.length()];
 
@@ -279,57 +278,45 @@ public class Varcs {
             }
 
             int var5 = var25.readUnsignedByte();
-            if (var5 >= 0 && var5 <= 2) {
+         if (var5 < 0 || var5 > 2) {
+            return;
+         }
+
                int var6;
                int var7;
                int var8;
                int var9;
                if (var5 >= 2) {
-                  var9 = var25.method43();
-                  var6 = 0;
+                  var9 = var25.readUnsignedShort();
 
-                  while (true) {
-                     if (var6 >= var9) {
-                        break label225;
-                     }
-
-                     var7 = var25.method43();
+            for (var6 = 0; var6 < var9; ++var6) {
+                     var7 = var25.readUnsignedShort();
                      var8 = var25.readUnsignedByte();
                      class3 var10 = (class3)ScriptFrame.findEnumerated(class3.method34(), var8);
                      Object var11 = var10.method31(var25);
                      if (this.intsPersistence[var7]) {
                         this.map.put(var7, var11);
                      }
-
-                     ++var6;
                   }
                } else {
-                  var9 = var25.method43();
+                  var9 = var25.readUnsignedShort();
 
                   for (var6 = 0; var6 < var9; ++var6) {
-                     var7 = var25.method43();
+                     var7 = var25.readUnsignedShort();
                      var8 = var25.readInt();
                      if (this.intsPersistence[var7]) {
                         this.map.put(var7, var8);
                      }
                   }
 
-                  var6 = var25.method43();
-                  var7 = 0;
+                  var6 = var25.readUnsignedShort();
 
-                  while (true) {
-                     if (var7 >= var6) {
-                        break label225;
-                     }
-
-                     var25.method43();
+            for (var7 = 0; var7 < var6; ++var7) {
+                     var25.readUnsignedShort();
                      var25.readStringCp1252NullTerminated();
-                     ++var7;
-                  }
                }
             }
          } catch (Exception var23) {
-            break label225;
          } finally {
             try {
                var1.close();
@@ -337,9 +324,6 @@ public class Varcs {
             }
 
          }
-
-         return;
-      }
 
       this.unwrittenChanges = false;
    }

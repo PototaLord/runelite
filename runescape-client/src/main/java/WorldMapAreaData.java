@@ -5,6 +5,7 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
+import net.runelite.rs.ScriptOpcodes;
 
 @ObfuscatedName("ae")
 @Implements("WorldMapAreaData")
@@ -23,7 +24,7 @@ public class WorldMapAreaData extends WorldMapArea {
    )
    void method387(Buffer var1, Buffer var2, int var3, boolean var4) {
       this.read(var1, var3);
-      int var5 = var2.method43();
+      int var5 = var2.readUnsignedShort();
       this.field1016 = new HashSet(var5);
 
       int var6;
@@ -39,7 +40,7 @@ public class WorldMapAreaData extends WorldMapArea {
          this.field1016.add(var7);
       }
 
-      var6 = var2.method43();
+      var6 = var2.readUnsignedShort();
       this.field1017 = new HashSet(var6);
 
       for (int var12 = 0; var12 < var6; ++var12) {
@@ -64,7 +65,7 @@ public class WorldMapAreaData extends WorldMapArea {
    )
    void method388(Buffer var1, boolean var2) {
       this.field1018 = new LinkedList();
-      int var3 = var1.method43();
+      int var3 = var1.readUnsignedShort();
 
       for (int var4 = 0; var4 < var3; ++var4) {
          int var5 = var1.method51();
@@ -106,7 +107,7 @@ public class WorldMapAreaData extends WorldMapArea {
       garbageValue = "-1767097678"
    )
    public static boolean method711(int var0) {
-      return var0 >= class231.field2810.field2820 && var0 <= class231.field2822.field2820;
+      return var0 >= WorldMapDecorationType.field2810.id && var0 <= WorldMapDecorationType.field2822.id;
    }
 
    @ObfuscatedName("u")
@@ -135,7 +136,7 @@ public class WorldMapAreaData extends WorldMapArea {
       }
 
       int var5;
-      if (var0 == 1300) {
+      if (var0 == ScriptOpcodes.CC_SETOP) {
          var5 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize] - 1;
          if (var5 >= 0 && var5 <= 9) {
             var4.setAction(var5, Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize]);
@@ -146,28 +147,28 @@ public class WorldMapAreaData extends WorldMapArea {
          }
       } else {
          int var6;
-         if (var0 == 1301) {
+         if (var0 == ScriptOpcodes.CC_SETDRAGGABLE) {
             RouteStrategy.Interpreter_intStackSize -= 2;
             var5 = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize];
             var6 = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 1];
             var4.parent = class204.getWidgetChild(var5, var6);
             return 1;
-         } else if (var0 == 1302) {
+         } else if (var0 == ScriptOpcodes.CC_SETDRAGGABLEBEHAVIOR) {
             var4.isScrollBar = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize] == 1;
             return 1;
-         } else if (var0 == 1303) {
+         } else if (var0 == ScriptOpcodes.CC_SETDRAGDEADZONE) {
             var4.dragZoneSize = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
             return 1;
-         } else if (var0 == 1304) {
+         } else if (var0 == ScriptOpcodes.CC_SETDRAGDEADTIME) {
             var4.dragThreshold = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
             return 1;
-         } else if (var0 == 1305) {
+         } else if (var0 == ScriptOpcodes.CC_SETOPBASE) {
             var4.dataText = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
             return 1;
-         } else if (var0 == 1306) {
+         } else if (var0 == ScriptOpcodes.CC_SETTARGETVERB) {
             var4.spellActionName = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
             return 1;
-         } else if (var0 == 1307) {
+         } else if (var0 == ScriptOpcodes.CC_CLEAROPS) {
             var4.actions = null;
             return 1;
          } else if (var0 == 1308) {
@@ -285,7 +286,8 @@ public class WorldMapAreaData extends WorldMapArea {
       signature = "(ZI)V",
       garbageValue = "-1746120861"
    )
-   static void method705(boolean var0) {
+   @Export("setTapToDrop")
+   static void setTapToDrop(boolean var0) {
       Client.tapToDrop = var0;
    }
 }

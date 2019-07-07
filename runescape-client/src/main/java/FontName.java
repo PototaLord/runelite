@@ -2,6 +2,7 @@ import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
+import net.runelite.rs.ScriptOpcodes;
 
 @ObfuscatedName("kx")
 @Implements("FontName")
@@ -54,10 +55,11 @@ public class FontName {
       signature = "(IIIZII)J",
       garbageValue = "1039369805"
    )
-   public static long method5637(int var0, int var1, int var2, boolean var3, int var4) {
-      long var5 = (long)((var0 & 127) << 0 | (var1 & 127) << 7 | (var2 & 3) << 14) | ((long)var4 & 4294967295L) << 17;
-      if (var3) {
-         var5 |= 65536L;
+   @Export("calculateTag")
+   public static long calculateTag(int x, int y, int type, boolean isNotInteractable, int identifier) {
+      long var5 = (long)((x & 0b1111111) << 0 | (y & 0b1111111) << 7 | (type & 0b11) << 14) | ((long)identifier & 0xffffffffL) << 17;
+      if (isNotInteractable) {
+         var5 |= 0x10000L;
       }
 
       return var5;
@@ -95,7 +97,7 @@ public class FontName {
       garbageValue = "-1336396061"
    )
    static int method5639(int var0, Script var1, boolean var2) {
-      if (var0 == 3600) {
+      if (var0 == ScriptOpcodes.FRIEND_COUNT) {
          if (WorldMapArea.friendSystem.field357 == 0) {
             Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = -2;
          } else if (WorldMapArea.friendSystem.field357 == 1) {
@@ -107,7 +109,7 @@ public class FontName {
          return 1;
       } else {
          int var3;
-         if (var0 == 3601) {
+         if (var0 == ScriptOpcodes.FRIEND_GETNAME) {
             var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
             if (WorldMapArea.friendSystem.method99() && var3 >= 0 && var3 < WorldMapArea.friendSystem.friendsList.size()) {
                Friend var6 = (Friend)WorldMapArea.friendSystem.friendsList.get(var3);
@@ -119,7 +121,7 @@ public class FontName {
             }
 
             return 1;
-         } else if (var0 == 3602) {
+         } else if (var0 == ScriptOpcodes.FRIEND_GETWORLD) {
             var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
             if (WorldMapArea.friendSystem.method99() && var3 >= 0 && var3 < WorldMapArea.friendSystem.friendsList.size()) {
                Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = ((Buddy)WorldMapArea.friendSystem.friendsList.get(var3)).world0;
@@ -128,7 +130,7 @@ public class FontName {
             }
 
             return 1;
-         } else if (var0 == 3603) {
+         } else if (var0 == ScriptOpcodes.FRIEND_GETRANK) {
             var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
             if (WorldMapArea.friendSystem.method99() && var3 >= 0 && var3 < WorldMapArea.friendSystem.friendsList.size()) {
                Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = ((Buddy)WorldMapArea.friendSystem.friendsList.get(var3)).rank;
@@ -139,33 +141,33 @@ public class FontName {
             return 1;
          } else {
             String var4;
-            if (var0 == 3604) {
+            if (var0 == ScriptOpcodes.FRIEND_SETRANK) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                int var8 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
                method5638(var4, var8);
                return 1;
-            } else if (var0 == 3605) {
+            } else if (var0 == ScriptOpcodes.FRIEND_ADD) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
-               WorldMapArea.friendSystem.method103(var4);
+               WorldMapArea.friendSystem.addFriend(var4);
                return 1;
-            } else if (var0 == 3606) {
+            } else if (var0 == ScriptOpcodes.FRIEND_DEL) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                WorldMapArea.friendSystem.removeFriend(var4);
                return 1;
-            } else if (var0 == 3607) {
+            } else if (var0 == ScriptOpcodes.IGNORE_ADD) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
-               WorldMapArea.friendSystem.method105(var4);
+               WorldMapArea.friendSystem.addIgnore(var4);
                return 1;
-            } else if (var0 == 3608) {
+            } else if (var0 == ScriptOpcodes.IGNORE_DEL) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                WorldMapArea.friendSystem.removeIgnore(var4);
                return 1;
-            } else if (var0 == 3609) {
+            } else if (var0 == ScriptOpcodes.FRIEND_TEST) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                var4 = NPCDefinition.method5161(var4);
                Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = WorldMapArea.friendSystem.isFriended(new Username(var4, KeyHandler.loginType), false) ? 1 : 0;
                return 1;
-            } else if (var0 == 3611) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATDISPLAYNAME) {
                if (PacketWriter.clanChat != null) {
                   Interpreter.Interpreter_stringStack[++Interpreter.Interpreter_stringStackSize - 1] = PacketWriter.clanChat.name;
                } else {
@@ -173,7 +175,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3612) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATCOUNT) {
                if (PacketWriter.clanChat != null) {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = PacketWriter.clanChat.size();
                } else {
@@ -181,7 +183,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3613) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATUSERNAME) {
                var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
                if (PacketWriter.clanChat != null && var3 < PacketWriter.clanChat.size()) {
                   Interpreter.Interpreter_stringStack[++Interpreter.Interpreter_stringStackSize - 1] = PacketWriter.clanChat.get(var3).username().getName();
@@ -190,7 +192,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3614) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATUSERWORLD) {
                var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
                if (PacketWriter.clanChat != null && var3 < PacketWriter.clanChat.size()) {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = ((Buddy)PacketWriter.clanChat.get(var3)).world();
@@ -199,7 +201,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3615) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATUSERRANK) {
                var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
                if (PacketWriter.clanChat != null && var3 < PacketWriter.clanChat.size()) {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = ((Buddy)PacketWriter.clanChat.get(var3)).rank;
@@ -208,24 +210,24 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3616) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATMINKICK) {
                Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = PacketWriter.clanChat != null ? PacketWriter.clanChat.field96 : 0;
                return 1;
-            } else if (var0 == 3617) {
+            } else if (var0 == ScriptOpcodes.CLAN_KICKUSER) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                IndexStoreActionHandler.method4655(var4);
                return 1;
-            } else if (var0 == 3618) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATRANK) {
                Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = PacketWriter.clanChat != null ? PacketWriter.clanChat.rank : 0;
                return 1;
-            } else if (var0 == 3619) {
+            } else if (var0 == ScriptOpcodes.CLAN_JOINCHAT) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                class31.method574(var4);
                return 1;
-            } else if (var0 == 3620) {
+            } else if (var0 == ScriptOpcodes.CLAN_LEAVECHAT) {
                class12.method158();
                return 1;
-            } else if (var0 == 3621) {
+            } else if (var0 == ScriptOpcodes.IGNORE_COUNT) {
                if (!WorldMapArea.friendSystem.method99()) {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = -1;
                } else {
@@ -233,7 +235,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3622) {
+            } else if (var0 == ScriptOpcodes.IGNORE_GETNAME) {
                var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
                if (WorldMapArea.friendSystem.method99() && var3 >= 0 && var3 < WorldMapArea.friendSystem.ignoreList.size()) {
                   Ignored var7 = (Ignored)WorldMapArea.friendSystem.ignoreList.get(var3);
@@ -245,12 +247,12 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3623) {
+            } else if (var0 == ScriptOpcodes.IGNORE_TEST) {
                var4 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                var4 = NPCDefinition.method5161(var4);
                Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = WorldMapArea.friendSystem.isIgnored(new Username(var4, KeyHandler.loginType)) ? 1 : 0;
                return 1;
-            } else if (var0 == 3624) {
+            } else if (var0 == ScriptOpcodes.CLAN_ISSELF) {
                var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
                if (PacketWriter.clanChat != null && var3 < PacketWriter.clanChat.size() && PacketWriter.clanChat.get(var3).username().equals(Canvas.localPlayer.username)) {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = 1;
@@ -259,7 +261,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3625) {
+            } else if (var0 == ScriptOpcodes.CLAN_GETCHATOWNERNAME) {
                if (PacketWriter.clanChat != null && PacketWriter.clanChat.owner != null) {
                   Interpreter.Interpreter_stringStack[++Interpreter.Interpreter_stringStackSize - 1] = PacketWriter.clanChat.owner;
                } else {
@@ -267,7 +269,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 == 3626) {
+            } else if (var0 == ScriptOpcodes.CLAN_ISFRIEND) {
                var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
                if (PacketWriter.clanChat != null && var3 < PacketWriter.clanChat.size() && ((ClanMate)PacketWriter.clanChat.get(var3)).isFriend()) {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = 1;
@@ -276,7 +278,7 @@ public class FontName {
                }
 
                return 1;
-            } else if (var0 != 3627) {
+            } else if (var0 != ScriptOpcodes.CLAN_ISIGNORE) {
                if (var0 == 3628) {
                   WorldMapArea.friendSystem.friendsList.removeComparator();
                   return 1;
@@ -479,7 +481,7 @@ public class FontName {
       AbstractIndexCache.indexCache0.method8();
       Skeleton.indexCache1.method8();
       WorldMapIcon1.indexCache3.method8();
-      class25.indexCache4.method8();
+      WorldMapDecoration.indexCache4.method8();
       SecureRandomFuture.indexCache5.method8();
       UserComparator3.indexCache6.method8();
       class40.indexCache7.method8();

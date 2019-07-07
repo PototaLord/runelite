@@ -1,6 +1,7 @@
 import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
+import net.runelite.rs.ScriptOpcodes;
 
 @ObfuscatedName("j")
 public class class16 {
@@ -62,11 +63,11 @@ public class class16 {
    )
    static int method188(int var0, Script var1, boolean var2) {
       Widget var3 = var2 ? WorldMapIcon1.field1030 : class12.field1111;
-      if (var0 == 1800) {
+      if (var0 == ScriptOpcodes.CC_GETTARGETMASK) {
          Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = class211.method4107(class1.getWidgetClickMask(var3));
          return 1;
-      } else if (var0 != 1801) {
-         if (var0 == 1802) {
+      } else if (var0 != ScriptOpcodes.CC_GETOP) {
+         if (var0 == ScriptOpcodes.CC_GETOPBASE) {
             if (var3.dataText == null) {
                Interpreter.Interpreter_stringStack[++Interpreter.Interpreter_stringStackSize - 1] = "";
             } else {
@@ -112,7 +113,7 @@ public class class16 {
          var2 = var1.method67();
          byte var13 = var1.method61();
          var3 = var1.method66();
-         var4 = var1.method43();
+         var4 = var1.readUnsignedShort();
          var5 = var1.method58();
          var6 = var5 >> 2;
          var7 = var5 & 3;
@@ -218,7 +219,7 @@ public class class16 {
          }
 
          if (class190.field2341 == var0) {
-            var31 = var1.method43();
+            var31 = var1.readUnsignedShort();
             var2 = var1.method58();
             var32 = var1.method66();
             var3 = var1.readUnsignedByte();
@@ -240,7 +241,7 @@ public class class16 {
                var4 = var1.readUnsignedByteNegate();
                var5 = (var4 >> 4 & 7) + WorldMapSection3.field1089;
                var6 = (var4 & 7) + Canvas.field95;
-               var7 = var1.method43();
+               var7 = var1.readUnsignedShort();
                if (var5 >= 0 && var6 >= 0 && var5 < 103 && var6 < 103) {
                   if (var3 == 0) {
                      BoundaryObject var34 = class65.scene.getBoundaryObject(SoundSystem.plane, var5, var6);
@@ -314,7 +315,7 @@ public class class16 {
                            Client.groundItems[SoundSystem.plane][var2][var32] = null;
                         }
 
-                        TilePaint.method3061(var2, var32);
+                        TilePaint.updateItemPile(var2, var32);
                      }
                   }
                } else if (class190.field2350 == var0) {
@@ -330,7 +331,7 @@ public class class16 {
                   }
                } else if (class190.field2352 == var0) {
                   var31 = var1.method59() * 4;
-                  var2 = var1.method43();
+                  var2 = var1.readUnsignedShort();
                   var32 = var1.method66();
                   var3 = var1.method59() * 4;
                   var4 = var1.method68();
@@ -369,7 +370,7 @@ public class class16 {
                         }
 
                         Client.groundItems[SoundSystem.plane][var3][var4].addFirst(var41);
-                        TilePaint.method3061(var3, var4);
+                        TilePaint.updateItemPile(var3, var4);
                      }
                   }
                } else {
@@ -389,7 +390,7 @@ public class class16 {
                            }
                         }
 
-                        TilePaint.method3061(var4, var5);
+                        TilePaint.updateItemPile(var4, var5);
                      }
                   }
                }
