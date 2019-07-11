@@ -16,14 +16,14 @@ public class NPCDefinition extends DualNode {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   @Export("NpcDefinition_indexCache")
-   static AbstractIndexCache NpcDefinition_indexCache;
+   @Export("NpcDefinition_archive")
+   static AbstractArchive NpcDefinition_archive;
    @ObfuscatedName("f")
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   @Export("NpcDefinition_modelIndexCache")
-   static AbstractIndexCache NpcDefinition_modelIndexCache;
+   @Export("NpcDefinition_modelArchive")
+   static AbstractArchive NpcDefinition_modelArchive;
    @ObfuscatedName("q")
    @ObfuscatedSignature(
       signature = "Ler;"
@@ -52,16 +52,16 @@ public class NPCDefinition extends DualNode {
    @Export("size")
    public int size;
    @ObfuscatedName("l")
-   @Export("archives")
-   int[] archives;
+   @Export("models")
+   int[] models;
    @ObfuscatedName("e")
    int[] field636;
    @ObfuscatedName("x")
    @ObfuscatedGetter(
       intValue = 275200787
    )
-   @Export("idleSequence")
-   public int idleSequence;
+   @Export("readySequence")
+   public int readySequence;
    @ObfuscatedName("d")
    @ObfuscatedGetter(
       intValue = 819690597
@@ -84,20 +84,20 @@ public class NPCDefinition extends DualNode {
    @ObfuscatedGetter(
       intValue = 1952230339
    )
-   @Export("walkTurnSequence")
-   public int walkTurnSequence;
+   @Export("walkBackSequence")
+   public int walkBackSequence;
    @ObfuscatedName("a")
    @ObfuscatedGetter(
       intValue = -1213774321
    )
-   @Export("walkTurnLeftSequence")
-   public int walkTurnLeftSequence;
+   @Export("walkLeftSequence")
+   public int walkLeftSequence;
    @ObfuscatedName("z")
    @ObfuscatedGetter(
       intValue = -96930503
    )
-   @Export("walkTurnRightSequence")
-   public int walkTurnRightSequence;
+   @Export("walkRightSequence")
+   public int walkRightSequence;
    @ObfuscatedName("j")
    @Export("recolorFrom")
    short[] recolorFrom;
@@ -192,13 +192,13 @@ public class NPCDefinition extends DualNode {
    NPCDefinition() {
       this.name = "null";
       this.size = 1;
-      this.idleSequence = -1;
+      this.readySequence = -1;
       this.turnLeftSequence = -1;
       this.turnRightSequence = -1;
       this.walkSequence = -1;
-      this.walkTurnSequence = -1;
-      this.walkTurnLeftSequence = -1;
-      this.walkTurnRightSequence = -1;
+      this.walkBackSequence = -1;
+      this.walkLeftSequence = -1;
+      this.walkRightSequence = -1;
       this.actions = new String[5];
       this.drawMapDot = true;
       this.combatLevel = -1;
@@ -221,8 +221,8 @@ public class NPCDefinition extends DualNode {
       signature = "(I)V",
       garbageValue = "482179419"
    )
-   @Export("init")
-   void init() {
+   @Export("postDecode")
+   void postDecode() {
    }
 
    @ObfuscatedName("w")
@@ -230,15 +230,15 @@ public class NPCDefinition extends DualNode {
       signature = "(Lgr;I)V",
       garbageValue = "-893102766"
    )
-   @Export("read")
-   void read(Buffer var1) {
+   @Export("decode")
+   void decode(Buffer var1) {
       while (true) {
          int var2 = var1.readUnsignedByte();
          if (var2 == 0) {
             return;
          }
 
-         this.readNext(var1, var2);
+         this.decodeNext(var1, var2);
       }
    }
 
@@ -247,23 +247,23 @@ public class NPCDefinition extends DualNode {
       signature = "(Lgr;IB)V",
       garbageValue = "-98"
    )
-   @Export("readNext")
-   void readNext(Buffer var1, int var2) {
+   @Export("decodeNext")
+   void decodeNext(Buffer var1, int var2) {
       int var3;
       int var4;
       if (var2 == 1) {
          var3 = var1.readUnsignedByte();
-         this.archives = new int[var3];
+         this.models = new int[var3];
 
          for (var4 = 0; var4 < var3; ++var4) {
-            this.archives[var4] = var1.readUnsignedShort();
+            this.models[var4] = var1.readUnsignedShort();
          }
       } else if (var2 == 2) {
          this.name = var1.readStringCp1252NullTerminated();
       } else if (var2 == 12) {
          this.size = var1.readUnsignedByte();
       } else if (var2 == 13) {
-         this.idleSequence = var1.readUnsignedShort();
+         this.readySequence = var1.readUnsignedShort();
       } else if (var2 == 14) {
          this.walkSequence = var1.readUnsignedShort();
       } else if (var2 == 15) {
@@ -272,9 +272,9 @@ public class NPCDefinition extends DualNode {
          this.turnRightSequence = var1.readUnsignedShort();
       } else if (var2 == 17) {
          this.walkSequence = var1.readUnsignedShort();
-         this.walkTurnSequence = var1.readUnsignedShort();
-         this.walkTurnLeftSequence = var1.readUnsignedShort();
-         this.walkTurnRightSequence = var1.readUnsignedShort();
+         this.walkBackSequence = var1.readUnsignedShort();
+         this.walkLeftSequence = var1.readUnsignedShort();
+         this.walkRightSequence = var1.readUnsignedShort();
       } else if (var2 >= 30 && var2 < 35) {
          this.actions[var2 - 30] = var1.readStringCp1252NullTerminated();
          if (this.actions[var2 - 30].equalsIgnoreCase("Hidden")) {
@@ -331,7 +331,7 @@ public class NPCDefinition extends DualNode {
          } else if (var2 == 111) {
             this.isFollower = true;
          } else if (var2 == 249) {
-            this.params = AbstractIndexCache.readStringIntParameters(var1, this.params);
+            this.params = AbstractArchive.readStringIntParameters(var1, this.params);
          }
       } else {
          this.transformVarbit = var1.readUnsignedShort();
@@ -382,8 +382,8 @@ public class NPCDefinition extends DualNode {
          if (var5 == null) {
             boolean var6 = false;
 
-            for (int var7 = 0; var7 < this.archives.length; ++var7) {
-               if (!NpcDefinition_modelIndexCache.tryLoadRecord(this.archives[var7], 0)) {
+            for (int var7 = 0; var7 < this.models.length; ++var7) {
+               if (!NpcDefinition_modelArchive.tryLoadFile(this.models[var7], 0)) {
                   var6 = true;
                }
             }
@@ -392,11 +392,11 @@ public class NPCDefinition extends DualNode {
                return null;
             }
 
-            ModelData[] var12 = new ModelData[this.archives.length];
+            ModelData[] var12 = new ModelData[this.models.length];
 
             int var8;
-            for (var8 = 0; var8 < this.archives.length; ++var8) {
-               var12[var8] = ModelData.method2788(NpcDefinition_modelIndexCache, this.archives[var8], 0);
+            for (var8 = 0; var8 < this.models.length; ++var8) {
+               var12[var8] = ModelData.method2788(NpcDefinition_modelArchive, this.models[var8], 0);
             }
 
             ModelData var9;
@@ -424,11 +424,11 @@ public class NPCDefinition extends DualNode {
 
          Model var10;
          if (var1 != null && var3 != null) {
-            var10 = var1.animateSequence2(var5, var2, var3, var4);
+            var10 = var1.applyTransformations(var5, var2, var3, var4);
          } else if (var1 != null) {
-            var10 = var1.animateSequence(var5, var2);
+            var10 = var1.transformActorModel(var5, var2);
          } else if (var3 != null) {
-            var10 = var3.animateSequence(var5, var4);
+            var10 = var3.transformActorModel(var5, var4);
          } else {
             var10 = var5.toSharedSequenceModel(true);
          }
@@ -457,7 +457,7 @@ public class NPCDefinition extends DualNode {
          boolean var1 = false;
 
          for (int var2 = 0; var2 < this.field636.length; ++var2) {
-            if (!NpcDefinition_modelIndexCache.tryLoadRecord(this.field636[var2], 0)) {
+            if (!NpcDefinition_modelArchive.tryLoadFile(this.field636[var2], 0)) {
                var1 = true;
             }
          }
@@ -468,7 +468,7 @@ public class NPCDefinition extends DualNode {
             ModelData[] var6 = new ModelData[this.field636.length];
 
             for (int var3 = 0; var3 < this.field636.length; ++var3) {
-               var6[var3] = ModelData.method2788(NpcDefinition_modelIndexCache, this.field636[var3], 0);
+               var6[var3] = ModelData.method2788(NpcDefinition_modelArchive, this.field636[var3], 0);
             }
 
             ModelData var7;
@@ -505,7 +505,7 @@ public class NPCDefinition extends DualNode {
    public final NPCDefinition transform() {
       int var1 = -1;
       if (this.transformVarbit != -1) {
-         var1 = WorldMapSection2.getVarbit(this.transformVarbit);
+         var1 = WorldMapSection0.getVarbit(this.transformVarbit);
       } else if (this.transformVarp != -1) {
          var1 = Varps.Varps_main[this.transformVarp];
       }
@@ -531,7 +531,7 @@ public class NPCDefinition extends DualNode {
       } else {
          int var1 = -1;
          if (this.transformVarbit != -1) {
-            var1 = WorldMapSection2.getVarbit(this.transformVarbit);
+            var1 = WorldMapSection0.getVarbit(this.transformVarbit);
          } else if (this.transformVarp != -1) {
             var1 = Varps.Varps_main[this.transformVarp];
          }
@@ -602,11 +602,11 @@ public class NPCDefinition extends DualNode {
             var2 = var2.replace('@', '_');
             var2 = var2.replace('&', '_');
             var2 = var2.replace('#', '_');
-            if (RunException.applet == null) {
+            if (RunException.RunException_applet == null) {
                return;
             }
 
-            URL var3 = new URL(RunException.applet.getCodeBase(), "clienterror.ws?c=" + RunException.revision + "&u=" + RunException.localPlayerName + "&v1=" + TaskHandler.javaVendor + "&v2=" + TaskHandler.javaVersion + "&ct=" + RunException.field761 + "&e=" + var2);
+            URL var3 = new URL(RunException.RunException_applet.getCodeBase(), "clienterror.ws?c=" + RunException.revision + "&u=" + RunException.localPlayerName + "&v1=" + TaskHandler.javaVendor + "&v2=" + TaskHandler.javaVersion + "&ct=" + RunException.field761 + "&e=" + var2);
             DataInputStream var4 = new DataInputStream(var3.openStream());
             var4.read();
             var4.close();
@@ -649,7 +649,7 @@ public class NPCDefinition extends DualNode {
    static void method5162() {
       Login.Login_username = Login.Login_username.trim();
       if (Login.Login_username.length() == 0) {
-         class54.method1089("Please enter your username.", "If you created your account after November", "2010, this will be the creation email address.");
+         class54.setLoginResponseString("Please enter your username.", "If you created your account after November", "2010, this will be the creation email address.");
       } else {
          long var0;
          try {
@@ -693,23 +693,23 @@ public class NPCDefinition extends DualNode {
 
          switch(var11) {
          case 2:
-            class54.method1089(Strings.field882, Strings.field883, Strings.field884);
+            class54.setLoginResponseString(Strings.field882, Strings.field883, Strings.field884);
             Login.loginIndex = 6;
             break;
          case 3:
-            class54.method1089("", "Error connecting to server.", "");
+            class54.setLoginResponseString("", "Error connecting to server.", "");
             break;
          case 4:
-            class54.method1089("The part of the website you are trying", "to connect to is offline at the moment.", "Please try again later.");
+            class54.setLoginResponseString("The part of the website you are trying", "to connect to is offline at the moment.", "Please try again later.");
             break;
          case 5:
-            class54.method1089("Sorry, there was an error trying to", "log you in to this part of the website.", "Please try again later.");
+            class54.setLoginResponseString("Sorry, there was an error trying to", "log you in to this part of the website.", "Please try again later.");
             break;
          case 6:
-            class54.method1089("", "Error connecting to server.", "");
+            class54.setLoginResponseString("", "Error connecting to server.", "");
             break;
          case 7:
-            class54.method1089("You must enter a valid login to proceed. For accounts", "created after 24th November 2010, please use your", "email address. Otherwise please use your username.");
+            class54.setLoginResponseString("You must enter a valid login to proceed. For accounts", "created after 24th November 2010, please use your", "email address. Otherwise please use your username.");
          }
       }
 
@@ -721,7 +721,7 @@ public class NPCDefinition extends DualNode {
       garbageValue = "1100306484"
    )
    static String method5161(String var0) {
-      PlayerType[] var1 = class48.method865();
+      PlayerType[] var1 = class48.PlayerType_values();
 
       for (int var2 = 0; var2 < var1.length; ++var2) {
          PlayerType var3 = var1[var2];

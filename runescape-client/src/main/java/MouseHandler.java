@@ -136,13 +136,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
       garbageValue = "-965288682"
    )
    @Export("getButton")
-   final int getButton(MouseEvent var1) {
-      int var2 = var1.getButton();
-      return !var1.isAltDown() && var2 != 2 ? (!var1.isMetaDown() && var2 != 3 ? 1 : 2) : 4;
+   final int getButton(MouseEvent mouseEvent) {
+      int var2 = mouseEvent.getButton();
+      return !mouseEvent.isAltDown() && var2 != 2 ? (!mouseEvent.isMetaDown() && var2 != 3 ? 1 : 2) : 4;
    }
 
-   @Export("mouseMoved")
-   @ObfuscatedName("mouseMoved")
    public final synchronized void mouseMoved(MouseEvent var1) {
       if (MouseHandler_instance != null) {
          MouseHandler_idleCycles = 0;
@@ -153,8 +151,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
 
    }
 
-   @Export("mousePressed")
-   @ObfuscatedName("mousePressed")
    public final synchronized void mousePressed(MouseEvent var1) {
       if (MouseHandler_instance != null) {
          MouseHandler_idleCycles = 0;
@@ -173,8 +169,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
 
    }
 
-   @Export("mouseReleased")
-   @ObfuscatedName("mouseReleased")
    public final synchronized void mouseReleased(MouseEvent var1) {
       if (MouseHandler_instance != null) {
          MouseHandler_idleCycles = 0;
@@ -187,8 +181,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
 
    }
 
-   @Export("mouseClicked")
-   @ObfuscatedName("mouseClicked")
    public final void mouseClicked(MouseEvent var1) {
       if (var1.isPopupTrigger()) {
          var1.consume();
@@ -196,8 +188,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
 
    }
 
-   @Export("mouseExited")
-   @ObfuscatedName("mouseExited")
    public final synchronized void mouseExited(MouseEvent var1) {
       if (MouseHandler_instance != null) {
          MouseHandler_idleCycles = 0;
@@ -208,19 +198,13 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
 
    }
 
-   @Export("mouseDragged")
-   @ObfuscatedName("mouseDragged")
    public final synchronized void mouseDragged(MouseEvent var1) {
       this.mouseMoved(var1);
    }
 
-   @Export("focusGained")
-   @ObfuscatedName("focusGained")
    public final void focusGained(FocusEvent var1) {
    }
 
-   @Export("focusLost")
-   @ObfuscatedName("focusLost")
    public final synchronized void focusLost(FocusEvent var1) {
       if (MouseHandler_instance != null) {
          MouseHandler_currentButton0 = 0;
@@ -228,8 +212,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
 
    }
 
-   @Export("mouseEntered")
-   @ObfuscatedName("mouseEntered")
    public final synchronized void mouseEntered(MouseEvent var1) {
       this.mouseMoved(var1);
    }
@@ -248,8 +230,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener, FocusLi
       signature = "(Ljava/lang/CharSequence;I)I",
       garbageValue = "1860098743"
    )
-   public static int method1085(CharSequence var0) {
-      return IgnoreList.method5438(var0, 10, true);
+   @Export("parseInt")
+   public static int parseInt(CharSequence var0) {
+      return IgnoreList.parseIntCustomRadix(var0, 10, true);
    }
 
    @ObfuscatedName("l")

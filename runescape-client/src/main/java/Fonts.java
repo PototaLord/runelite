@@ -11,8 +11,8 @@ public class Fonts {
    @ObfuscatedSignature(
       signature = "Lff;"
    )
-   @Export("indexStore255")
-   static IndexStore indexStore255;
+   @Export("masterDisk")
+   static ArchiveDisk masterDisk;
    @ObfuscatedName("o")
    static byte[][][] field350;
    @ObfuscatedName("l")
@@ -25,12 +25,14 @@ public class Fonts {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   AbstractIndexCache field351;
+   @Export("spritesArchive")
+   AbstractArchive spritesArchive;
    @ObfuscatedName("f")
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   AbstractIndexCache field352;
+   @Export("fontsArchive")
+   AbstractArchive fontsArchive;
    @ObfuscatedName("q")
    @Export("map")
    HashMap map;
@@ -38,9 +40,9 @@ public class Fonts {
    @ObfuscatedSignature(
       signature = "(Lir;Lir;)V"
    )
-   public Fonts(AbstractIndexCache var1, AbstractIndexCache var2) {
-      this.field351 = var1;
-      this.field352 = var2;
+   public Fonts(AbstractArchive var1, AbstractArchive var2) {
+      this.spritesArchive = var1;
+      this.fontsArchive = var2;
       this.map = new HashMap();
    }
 
@@ -59,12 +61,12 @@ public class Fonts {
          if (this.map.containsKey(var5)) {
             var2.put(var5, this.map.get(var5));
          } else {
-            AbstractIndexCache var6 = this.field351;
-            AbstractIndexCache var7 = this.field352;
+            AbstractArchive var6 = this.spritesArchive;
+            AbstractArchive var7 = this.fontsArchive;
             String var8 = var5.field349;
-            int var9 = var6.getArchiveId(var8);
-            int var10 = var6.getRecordId(var9, "");
-            Font var11 = SpriteIds.method5823(var6, var7, var9, var10);
+            int var9 = var6.getGroupId(var8);
+            int var10 = var6.getFileId(var9, "");
+            Font var11 = GraphicsDefaults.loadFont(var6, var7, var9, var10);
             if (var11 != null) {
                this.map.put(var5, var11);
                var2.put(var5, var11);
@@ -80,7 +82,8 @@ public class Fonts {
       signature = "(I)Lbt;",
       garbageValue = "2102006478"
    )
-   static World method5647() {
-      return World.field987 < World.worldsCount ? ItemContainer.worlds[++World.field987 - 1] : null;
+   @Export("getNextWorldListWorld")
+   static World getNextWorldListWorld() {
+      return World.worldListWorldCount < World.worldsCount ? ItemContainer.worlds[++World.worldListWorldCount - 1] : null;
    }
 }

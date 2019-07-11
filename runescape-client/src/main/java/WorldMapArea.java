@@ -25,14 +25,14 @@ public class WorldMapArea {
    @ObfuscatedGetter(
       intValue = 1232579503
    )
-   @Export("id0")
-   int id0;
+   @Export("id")
+   int id;
    @ObfuscatedName("f")
-   @Export("archiveName0")
-   String archiveName0;
+   @Export("archiveName")
+   String archiveName;
    @ObfuscatedName("q")
-   @Export("name0")
-   String name0;
+   @Export("name")
+   String name;
    @ObfuscatedName("w")
    @ObfuscatedGetter(
       intValue = 986239133
@@ -49,7 +49,7 @@ public class WorldMapArea {
       signature = "Lhu;"
    )
    @Export("origin0")
-   TileLocation origin0;
+   Coord origin0;
    @ObfuscatedName("g")
    @ObfuscatedGetter(
       intValue = 1238532539
@@ -75,14 +75,14 @@ public class WorldMapArea {
    @Export("maxY0")
    int maxY0;
    @ObfuscatedName("d")
-   @Export("isMain0")
-   boolean isMain0;
+   @Export("isMain")
+   boolean isMain;
    @ObfuscatedName("k")
    @Export("sections")
    LinkedList sections;
 
    public WorldMapArea() {
-      this.id0 = -1;
+      this.id = -1;
       this.field1015 = -1;
       this.zoom0 = -1;
       this.origin0 = null;
@@ -90,7 +90,7 @@ public class WorldMapArea {
       this.maxX0 = 0;
       this.minY0 = Integer.MAX_VALUE;
       this.maxY0 = 0;
-      this.isMain0 = false;
+      this.isMain = false;
    }
 
    @ObfuscatedName("m")
@@ -99,14 +99,14 @@ public class WorldMapArea {
       garbageValue = "1854512327"
    )
    @Export("read")
-   public void read(Buffer var1, int var2) {
-      this.id0 = var2;
-      this.archiveName0 = var1.readStringCp1252NullTerminated();
-      this.name0 = var1.readStringCp1252NullTerminated();
-      this.origin0 = new TileLocation(var1.readInt());
+   public void read(Buffer var1, int fileId) {
+      this.id = fileId;
+      this.archiveName = var1.readStringCp1252NullTerminated();
+      this.name = var1.readStringCp1252NullTerminated();
+      this.origin0 = new Coord(var1.readInt());
       this.field1015 = var1.readInt();
       var1.readUnsignedByte();
-      this.isMain0 = var1.readUnsignedByte() == 1;
+      this.isMain = var1.readUnsignedByte() == 1;
       this.zoom0 = var1.readUnsignedByte();
       int var3 = var1.readUnsignedByte();
       this.sections = new LinkedList();
@@ -126,21 +126,21 @@ public class WorldMapArea {
    @Export("readWorldMapSection")
    WorldMapSection readWorldMapSection(Buffer var1) {
       int var2 = var1.readUnsignedByte();
-      WorldMapSectionType[] var3 = new WorldMapSectionType[]{WorldMapSectionType.field1101, WorldMapSectionType.field1103, WorldMapSectionType.field1100, WorldMapSectionType.field1102};
+      WorldMapSectionType[] var3 = new WorldMapSectionType[]{WorldMapSectionType.WORLDMAPSECTIONTYPE1, WorldMapSectionType.WORLDMAPSECTIONTYPE3, WorldMapSectionType.WORLDMAPSECTIONTYPE0, WorldMapSectionType.WORLDMAPSECTIONTYPE2};
       WorldMapSectionType var4 = (WorldMapSectionType)ScriptFrame.findEnumerated(var3, var2);
       Object var5 = null;
       switch(var4.type) {
       case 0:
-         var5 = new WorldMapSection2();
+         var5 = new WorldMapSection0();
          break;
       case 1:
-         var5 = new WorldMapSection3();
-         break;
-      case 2:
          var5 = new WorldMapSection1();
          break;
+      case 2:
+         var5 = new WorldMapSection2();
+         break;
       case 3:
-         var5 = new WorldMapSection0();
+         var5 = new WorldMapSection3();
          break;
       default:
          throw new IllegalStateException("");
@@ -156,17 +156,19 @@ public class WorldMapArea {
       garbageValue = "1843012457"
    )
    @Export("containsCoord")
-   public boolean containsCoord(int var1, int var2, int var3) {
+   public boolean containsCoord(int plane, int x, int y) {
       Iterator var4 = this.sections.iterator();
 
-      while (var4.hasNext()) {
-         WorldMapSection var5 = (WorldMapSection)var4.next();
-         if (var5.containsCoord(var1, var2, var3)) {
-            return true;
+      WorldMapSection var5;
+      do {
+         if (!var4.hasNext()) {
+            return false;
          }
-      }
 
-      return false;
+         var5 = (WorldMapSection)var4.next();
+      } while(!var5.containsCoord(plane, x, y));
+
+      return true;
    }
 
    @ObfuscatedName("w")
@@ -175,21 +177,23 @@ public class WorldMapArea {
       garbageValue = "-693447297"
    )
    @Export("containsPosition")
-   public boolean containsPosition(int var1, int var2) {
-      int var3 = var1 / 64;
-      int var4 = var2 / 64;
+   public boolean containsPosition(int x, int y) {
+      int var3 = x / 64;
+      int var4 = y / 64;
       if (var3 >= this.minX0 && var3 <= this.maxX0) {
          if (var4 >= this.minY0 && var4 <= this.maxY0) {
             Iterator var5 = this.sections.iterator();
 
-            while (var5.hasNext()) {
-               WorldMapSection var6 = (WorldMapSection)var5.next();
-               if (var6.containsPosition(var1, var2)) {
-                  return true;
+            WorldMapSection var6;
+            do {
+               if (!var5.hasNext()) {
+                  return false;
                }
-            }
 
-            return false;
+               var6 = (WorldMapSection)var5.next();
+            } while(!var6.containsPosition(x, y));
+
+            return true;
          } else {
             return false;
          }
@@ -204,17 +208,19 @@ public class WorldMapArea {
       garbageValue = "745399916"
    )
    @Export("position")
-   public int[] position(int var1, int var2, int var3) {
+   public int[] position(int plane, int x, int y) {
       Iterator var4 = this.sections.iterator();
 
-      while (var4.hasNext()) {
-         WorldMapSection var5 = (WorldMapSection)var4.next();
-         if (var5.containsCoord(var1, var2, var3)) {
-            return var5.position(var1, var2, var3);
+      WorldMapSection var5;
+      do {
+         if (!var4.hasNext()) {
+            return null;
          }
-      }
 
-      return null;
+         var5 = (WorldMapSection)var4.next();
+      } while(!var5.containsCoord(plane, x, y));
+
+      return var5.position(plane, x, y);
    }
 
    @ObfuscatedName("u")
@@ -223,17 +229,19 @@ public class WorldMapArea {
       garbageValue = "1509069978"
    )
    @Export("coord")
-   public TileLocation coord(int var1, int var2) {
+   public Coord coord(int x, int y) {
       Iterator var3 = this.sections.iterator();
 
-      while (var3.hasNext()) {
-         WorldMapSection var4 = (WorldMapSection)var3.next();
-         if (var4.containsPosition(var1, var2)) {
-            return var4.coord(var1, var2);
+      WorldMapSection var4;
+      do {
+         if (!var3.hasNext()) {
+            return null;
          }
-      }
 
-      return null;
+         var4 = (WorldMapSection)var3.next();
+      } while(!var4.containsPosition(x, y));
+
+      return var4.coord(x, y);
    }
 
    @ObfuscatedName("g")
@@ -257,9 +265,9 @@ public class WorldMapArea {
       signature = "(I)I",
       garbageValue = "-628294476"
    )
-   @Export("id")
-   public int id() {
-      return this.id0;
+   @Export("getId")
+   public int getId() {
+      return this.id;
    }
 
    @ObfuscatedName("e")
@@ -267,9 +275,9 @@ public class WorldMapArea {
       signature = "(B)Z",
       garbageValue = "-39"
    )
-   @Export("isMain")
-   public boolean isMain() {
-      return this.isMain0;
+   @Export("getIsMain")
+   public boolean getIsMain() {
+      return this.isMain;
    }
 
    @ObfuscatedName("x")
@@ -277,9 +285,9 @@ public class WorldMapArea {
       signature = "(B)Ljava/lang/String;",
       garbageValue = "-65"
    )
-   @Export("archiveName")
-   public String archiveName() {
-      return this.archiveName0;
+   @Export("getArchiveName")
+   public String getArchiveName() {
+      return this.archiveName;
    }
 
    @ObfuscatedName("d")
@@ -287,9 +295,9 @@ public class WorldMapArea {
       signature = "(B)Ljava/lang/String;",
       garbageValue = "-66"
    )
-   @Export("name")
-   public String name() {
-      return this.name0;
+   @Export("getName")
+   public String getName() {
+      return this.name;
    }
 
    @ObfuscatedName("a")
@@ -387,8 +395,8 @@ public class WorldMapArea {
       garbageValue = "-1411761003"
    )
    @Export("origin")
-   public TileLocation origin() {
-      return new TileLocation(this.origin0);
+   public Coord origin() {
+      return new Coord(this.origin0);
    }
 
    @ObfuscatedName("m")

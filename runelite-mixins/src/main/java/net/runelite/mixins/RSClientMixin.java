@@ -25,6 +25,7 @@
 package net.runelite.mixins;
 
 import java.util.HashSet;
+import java.util.Set;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.ClanMember;
 import net.runelite.api.EnumDefinition;
@@ -51,7 +52,6 @@ import net.runelite.api.MenuEntry;
 import net.runelite.api.MessageNode;
 import net.runelite.api.NPC;
 import net.runelite.api.Node;
-import net.runelite.api.PacketBuffer;
 import static net.runelite.api.Perspective.LOCAL_TILE_SIZE;
 import net.runelite.api.Player;
 import net.runelite.api.Point;
@@ -87,6 +87,7 @@ import net.runelite.api.events.ResizeableChanged;
 import net.runelite.api.events.UsernameChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.events.WidgetPressed;
 import net.runelite.api.hooks.Callbacks;
 import net.runelite.api.hooks.DrawCallbacks;
 import net.runelite.api.vars.AccountType;
@@ -111,8 +112,9 @@ import net.runelite.api.mixins.MethodHook;
 import net.runelite.api.mixins.Mixin;
 import net.runelite.api.mixins.Replace;
 import net.runelite.api.mixins.Shadow;
+import net.runelite.rs.api.RSPacketBuffer;
 import org.slf4j.Logger;
-import net.runelite.rs.api.RSAbstractIndexCache;
+import net.runelite.rs.api.RSAbstractArchive;
 import net.runelite.rs.api.RSChatChannel;
 import net.runelite.rs.api.RSClanChat;
 import net.runelite.rs.api.RSClient;
@@ -162,6 +164,9 @@ public abstract class RSClientMixin implements RSClient
 	private static boolean interpolateObjectAnimations;
 
 	@Inject
+	private static boolean interpolateWidgetAnimations;
+
+	@Inject
 	private static RSPlayer[] oldPlayers = new RSPlayer[2048];
 
 	@Inject
@@ -207,7 +212,7 @@ public abstract class RSClientMixin implements RSClient
 	private static boolean hideFriendCastOptions = false;
 
 	@Inject
-	private static HashSet<String> unhiddenCasts = new HashSet<String>();
+	private static Set<String> unhiddenCasts = new HashSet<String>();
 
 	@Inject
 	@Override
@@ -225,7 +230,7 @@ public abstract class RSClientMixin implements RSClient
 
 	@Inject
 	@Override
-	public void setUnhiddenCasts(HashSet<String> casts)
+	public void setUnhiddenCasts(Set<String> casts)
 	{
 		unhiddenCasts = casts;
 	}
@@ -303,6 +308,20 @@ public abstract class RSClientMixin implements RSClient
 	public void setInterpolateObjectAnimations(boolean interpolate)
 	{
 		interpolateObjectAnimations = interpolate;
+	}
+
+	@Inject
+	@Override
+	public boolean isInterpolateWidgetAnimations()
+	{
+		return interpolateWidgetAnimations;
+	}
+
+	@Inject
+	@Override
+	public void setInterpolateWidgetAnimations(boolean interpolate)
+	{
+		interpolateWidgetAnimations = interpolate;
 	}
 
 	@Inject
@@ -671,8 +690,8 @@ public abstract class RSClientMixin implements RSClient
 				new MenuEntry(
 					client.getMenuOptions()[oldCount],
 					client.getMenuTargets()[oldCount],
-					client.getMenuTypes()[oldCount],
 					client.getMenuIdentifiers()[oldCount],
+					client.getMenuTypes()[oldCount],
 					client.getMenuActionParams0()[oldCount],
 					client.getMenuActionParams1()[oldCount],
 					client.getMenuForceLeftClick()[oldCount]
@@ -1253,9 +1272,16 @@ public abstract class RSClientMixin implements RSClient
 	@Replace("menuAction")
 	static void rl$menuAction(int actionParam, int widgetId, int menuAction, int id, String menuOption, String menuTarget, int var6, int var7)
 	{
+		boolean authentic = true;
+		if (menuTarget != null && menuTarget.startsWith("!AUTHENTIC"))
+		{
+			authentic = false;
+			menuTarget = menuTarget.substring(10);
+		}
+
 		if (printMenuActions && client.getLogger().isDebugEnabled())
 		{
-			client.getLogger().debug("Menuaction: {} {} {} {} {} {} {} {}", actionParam, widgetId, menuAction, id, menuOption, menuTarget, var6, var7);
+			client.getLogger().debug("Menuaction: {} {} {} {} {} {} {} {} {}", actionParam, widgetId, menuAction, id, menuOption, menuTarget, var6, var7, authentic);
 		}
 
 		/* Along the way, the RuneScape client may change a menuAction by incrementing it with 2000.
@@ -1275,7 +1301,8 @@ public abstract class RSClientMixin implements RSClient
 				actionParam,
 				widgetId,
 				false
-			)
+			),
+			authentic
 		);
 
 		client.getCallbacks().post(menuOptionClicked);
@@ -1287,6 +1314,23 @@ public abstract class RSClientMixin implements RSClient
 
 		rs$menuAction(menuOptionClicked.getActionParam0(), menuOptionClicked.getActionParam1(), menuOptionClicked.getType(),
 			menuOptionClicked.getIdentifier(), menuOptionClicked.getOption(), menuOptionClicked.getTarget(), var6, var7);
+	}
+
+	@Override
+	@Inject
+	public void invokeMenuAction(int actionParam, int widgetId, int menuAction, int id, String menuOption, String menuTarget, int var6, int var7)
+	{
+		client.sendMenuAction(actionParam, widgetId, menuAction, id, menuOption, "!AUTHENTIC" + menuTarget, var6, var7);
+	}
+
+	@Inject
+	@FieldHook("tempMenuAction")
+	public static void onTempMenuActionChanged(int idx)
+	{
+		if (client.getTempMenuAction() != null)
+		{
+			client.getCallbacks().post(WidgetPressed.INSTANCE);
+		}
 	}
 
 	@FieldHook("Login_username")
@@ -1329,7 +1373,7 @@ public abstract class RSClientMixin implements RSClient
 
 	@Inject
 	@MethodHook("updateNpcs")
-	public static void updateNpcs(boolean var0, PacketBuffer var1)
+	public static void updateNpcs(boolean var0, RSPacketBuffer var1)
 	{
 		client.getCallbacks().updateNpcs();
 	}
@@ -1355,13 +1399,13 @@ public abstract class RSClientMixin implements RSClient
 	}
 
 	@Inject
-	@MethodHook("methodDraw")
-	public void methodDraw(boolean var1)
+	@MethodHook("draw")
+	public void draw(boolean var1)
 	{
 		callbacks.clientMainLoop();
 	}
 
-	@MethodHook("drawWidgetGroup")
+	@MethodHook("drawInterface")
 	@Inject
 	public static void renderWidgetLayer(Widget[] widgets, int parentId, int minX, int minY, int maxX, int maxY, int x, int y, int var8)
 	{
@@ -1464,7 +1508,7 @@ public abstract class RSClientMixin implements RSClient
 	@Override
 	public RSSprite[] getSprites(IndexDataBase source, int archiveId, int fileId)
 	{
-		RSAbstractIndexCache rsSource = (RSAbstractIndexCache) source;
+		RSAbstractArchive rsSource = (RSAbstractArchive) source;
 		byte[] configData = rsSource.getConfigData(archiveId, fileId);
 		if (configData == null)
 		{
@@ -1606,5 +1650,21 @@ public abstract class RSClientMixin implements RSClient
 		}
 
 		return hideFriendAttackOptions && (p.isFriended() || p.isClanMember());
+	}
+
+	@Inject
+	@Override
+	public void addFriend(String friend)
+	{
+		RSFriendSystem friendSystem = getFriendManager();
+		friendSystem.addFriend(friend);
+	}
+
+	@Inject
+	@Override
+	public void removeFriend(String friend)
+	{
+		RSFriendSystem friendSystem = getFriendManager();
+		friendSystem.removeFriend(friend);
 	}
 }

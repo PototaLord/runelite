@@ -73,22 +73,22 @@ public class AoeWarningOverlay extends Overlay
 		WorldPoint lp = client.getLocalPlayer().getWorldLocation();
 		for (WorldPoint point : plugin.getLightningTrail())
 		{
-			OverlayUtil.drawTile(graphics, client, point, lp, new Color(0, 150, 200), 2, 150, 50);
+			OverlayUtil.drawTiles(graphics, client, point, lp, new Color(0, 150, 200), 2, 150, 50);
 		}
 
 		for (WorldPoint point : plugin.getAcidTrail())
 		{
-			OverlayUtil.drawTile(graphics, client, point, lp, new Color(69, 241, 44), 2, 150, 50);
+			OverlayUtil.drawTiles(graphics, client, point, lp, new Color(69, 241, 44), 2, 150, 50);
 		}
 
 		for (WorldPoint point : plugin.getCrystalSpike())
 		{
-			OverlayUtil.drawTile(graphics, client, point, lp, new Color(255, 0, 84), 2, 150, 50);
+			OverlayUtil.drawTiles(graphics, client, point, lp, new Color(255, 0, 84), 2, 150, 50);
 		}
 
 		for (WorldPoint point : plugin.getWintertodtSnowFall())
 		{
-			OverlayUtil.drawTile(graphics, client, point, lp, new Color(255, 0, 84), 2, 150, 50);
+			OverlayUtil.drawTiles(graphics, client, point, lp, new Color(255, 0, 84), 2, 150, 50);
 		}
 
 		Instant now = Instant.now();
@@ -157,14 +157,12 @@ public class AoeWarningOverlay extends Overlay
 				graphics.setColor(new Color(setAlphaComponent(plugin.getOverlayColor().getRGB(), outlineAlpha), true));
 				graphics.drawPolygon(tilePoly);
 			}
-			if (plugin.isTickTimers())
+			if (plugin.isTickTimers() && tickProgress >= 0)
 			{
-				if (tickProgress >= 0)
-				{
-					OverlayUtil.renderTextLocation(graphics, Integer.toString(tickProgress), plugin.getTextSize(),
-						plugin.getFontStyle(), color, centerPoint(tilePoly.getBounds()), plugin.isShadows(), 0);
-				}
+				OverlayUtil.renderTextLocation(graphics, Integer.toString(tickProgress), plugin.getTextSize(),
+					plugin.getFontStyle(), color, centerPoint(tilePoly.getBounds()), plugin.isShadows(), 0);
 			}
+
 			graphics.setColor(new Color(setAlphaComponent(plugin.getOverlayColor().getRGB(), fillAlpha), true));
 			graphics.fillPolygon(tilePoly);
 		}

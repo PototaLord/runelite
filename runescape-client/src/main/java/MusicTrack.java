@@ -82,7 +82,7 @@ public class MusicTrack extends Node {
       var14 = var2 + var5 + var6 + var7 + var8 + var9 + var10 + var11 + var12;
 
       for (var15 = 0; var15 < var14; ++var15) {
-         var1.method52();
+         var1.readVarInt();
       }
 
       var4 += var1.index - var13;
@@ -205,8 +205,8 @@ public class MusicTrack extends Node {
 
          while (true) {
             while (true) {
-               int var63 = var1.method52();
-               var51.method42(var63);
+               int var63 = var1.readVarInt();
+               var51.writeVarInt(var63);
                int var64 = var1.array[var29++] & 255;
                boolean var65 = var64 != var62;
                var62 = var64 & 15;
@@ -217,7 +217,7 @@ public class MusicTrack extends Node {
 
                   var51.writeByte(47);
                   var51.writeByte(0);
-                  var51.method39(var51.index - var61);
+                  var51.writeLengthInt(var51.index - var61);
                   continue label222;
                }
 
@@ -427,8 +427,8 @@ public class MusicTrack extends Node {
       signature = "(Lir;II)Lhe;"
    )
    @Export("readTrack")
-   public static MusicTrack readTrack(AbstractIndexCache var0, int var1, int var2) {
-      byte[] var3 = var0.takeRecord(var1, var2);
+   public static MusicTrack readTrack(AbstractArchive var0, int var1, int var2) {
+      byte[] var3 = var0.takeFile(var1, var2);
       return var3 == null ? null : new MusicTrack(new Buffer(var3));
    }
 }

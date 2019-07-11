@@ -51,28 +51,28 @@ public class TextureProvider implements TextureLoader {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   @Export("indexCache")
-   AbstractIndexCache indexCache;
+   @Export("archive")
+   AbstractArchive archive;
 
    @ObfuscatedSignature(
       signature = "(Lir;Lir;IDI)V"
    )
-   public TextureProvider(AbstractIndexCache var1, AbstractIndexCache var2, int var3, double var4, int var6) {
+   public TextureProvider(AbstractArchive texturesArchive, AbstractArchive spritesArchive, int var3, double var4, int var6) {
       this.deque = new NodeDeque();
       this.remaining = 0;
       this.brightness0 = 1.0D;
       this.textureSize = 128;
-      this.indexCache = var2;
+      this.archive = spritesArchive;
       this.capacity = var3;
       this.remaining = this.capacity;
       this.brightness0 = var4;
       this.textureSize = var6;
-      int[] var7 = var1.method3(0);
+      int[] var7 = texturesArchive.getGroupFileIds(0);
       int var8 = var7.length;
-      this.textures = new Texture[var1.method4(0)];
+      this.textures = new Texture[texturesArchive.getGroupFileCount(0)];
 
       for (int var9 = 0; var9 < var8; ++var9) {
-         Buffer var10 = new Buffer(var1.takeRecord(0, var7[var9]));
+         Buffer var10 = new Buffer(texturesArchive.takeFile(0, var7[var9]));
          this.textures[var7[var9]] = new Texture(var10);
       }
 
@@ -83,7 +83,8 @@ public class TextureProvider implements TextureLoader {
       signature = "(I)I",
       garbageValue = "-1996487053"
    )
-   public int method323() {
+   @Export("getLoadedPercentage")
+   public int getLoadedPercentage() {
       int var1 = 0;
       int var2 = 0;
       Texture[] var3 = this.textures;
@@ -96,7 +97,7 @@ public class TextureProvider implements TextureLoader {
 
             for (int var7 = 0; var7 < var6.length; ++var7) {
                int var8 = var6[var7];
-               if (this.indexCache.method1(var8)) {
+               if (this.archive.method1(var8)) {
                   ++var2;
                }
             }
@@ -112,8 +113,8 @@ public class TextureProvider implements TextureLoader {
 
    @ObfuscatedName("f")
    @Export("setBrightness")
-   public void setBrightness(double var1) {
-      this.brightness0 = var1;
+   public void setBrightness(double brightness) {
+      this.brightness0 = brightness;
       this.clear();
    }
 
@@ -132,7 +133,7 @@ public class TextureProvider implements TextureLoader {
             return var2.pixels;
          }
 
-         boolean var3 = var2.method320(this.brightness0, this.textureSize, this.indexCache);
+         boolean var3 = var2.method320(this.brightness0, this.textureSize, this.archive);
          if (var3) {
             if (this.remaining == 0) {
                Texture var4 = (Texture)this.deque.removeFirst();
@@ -155,8 +156,9 @@ public class TextureProvider implements TextureLoader {
       signature = "(II)I",
       garbageValue = "-1641984961"
    )
-   public int vmethod324(int var1) {
-      return this.textures[var1] != null ? this.textures[var1].int1 : 0;
+   @Export("getAverageTextureRGB")
+   public int getAverageTextureRGB(int var1) {
+      return this.textures[var1] != null ? this.textures[var1].averageRGB : 0;
    }
 
    @ObfuscatedName("o")
@@ -205,7 +207,7 @@ public class TextureProvider implements TextureLoader {
       for (int var2 = 0; var2 < this.textures.length; ++var2) {
          Texture var3 = this.textures[var2];
          if (var3 != null && var3.animationDirection != 0 && var3.isLoaded) {
-            var3.Texture_animate(var1);
+            var3.animate(var1);
             var3.isLoaded = false;
          }
       }
@@ -221,7 +223,7 @@ public class TextureProvider implements TextureLoader {
       int var2 = var0.index;
       byte[] var3 = class230.method4516(var1);
       var0.writeSmartByteShort(var3.length);
-      var0.index += class303.huffman.method127(var3, 0, var3.length, var0.array, var0.index);
+      var0.index += class303.huffman.compress(var3, 0, var3.length, var0.array, var0.index);
       return var0.index - var2;
    }
 
@@ -231,12 +233,12 @@ public class TextureProvider implements TextureLoader {
       garbageValue = "-8"
    )
    @Export("byteArrayFromObject")
-   public static byte[] byteArrayFromObject(Object var0, boolean var1) {
+   public static byte[] byteArrayFromObject(Object var0, boolean copyArray) {
       if (var0 == null) {
          return null;
       } else if (var0 instanceof byte[]) {
-         byte[] var5 = (byte[])var0;
-         if (var1) {
+         byte[] var5 = ((byte[])var0);
+         if (copyArray) {
             int var3 = var5.length;
             byte[] var4 = new byte[var3];
             System.arraycopy(var5, 0, var4, 0, var3);
@@ -262,7 +264,7 @@ public class TextureProvider implements TextureLoader {
       Buffer var4 = new Buffer(var0);
       int var5 = -1;
 
-      label71:
+      label56:
       while (true) {
          int var6 = var4.method49();
          if (var6 == 0) {
@@ -274,50 +276,38 @@ public class TextureProvider implements TextureLoader {
          boolean var8 = false;
 
          while (true) {
-            int var12;
-            ObjectDefinition var15;
-            do {
-               int var13;
-               int var14;
-               do {
-                  do {
-                     do {
-                        do {
-                           int var9;
-                           while (var8) {
-                              var9 = var4.method48();
-                              if (var9 == 0) {
-                                 continue label71;
-                              }
+            int var13;
+            while (!var8) {
+               var13 = var4.readUShortSmart();
+               if (var13 == 0) {
+                  continue label56;
+               }
 
-                              var4.readUnsignedByte();
-                           }
+               var7 += var13 - 1;
+               int var14 = var7 & 63;
+               int var15 = var7 >> 6 & 63;
+               int var9 = var4.readUnsignedByte() >> 2;
+               int var11 = var15 + var1;
+               int var12 = var14 + var2;
+               if (var11 > 0 && var12 > 0 && var11 < 103 && var12 < 103) {
+                  ObjectDefinition var10 = class50.getObjectDefinition(var5);
+                  if (var9 != 22 || !Client.isLowDetail || var10.int1 != 0 || var10.interactType == 1 || var10.boolean2) {
+                     if (!var10.method231()) {
+                        ++Client.field179;
+                        var3 = false;
+                     }
 
-                           var9 = var4.method48();
-                           if (var9 == 0) {
-                              continue label71;
-                           }
-
-                           var7 += var9 - 1;
-                           int var10 = var7 & 63;
-                           int var11 = var7 >> 6 & 63;
-                           var12 = var4.readUnsignedByte() >> 2;
-                           var13 = var11 + var1;
-                           var14 = var10 + var2;
-                        } while(var13 <= 0);
-                     } while(var14 <= 0);
-                  } while(var13 >= 103);
-               } while(var14 >= 103);
-
-               var15 = class50.getObjectDefinition(var5);
-            } while(var12 == 22 && Client.isLowDetail && var15.int1 == 0 && var15.interactType != 1 && !var15.boolean2);
-
-            if (!var15.method231()) {
-               ++Client.field179;
-               var3 = false;
+                     var8 = true;
+                  }
+               }
             }
 
-            var8 = true;
+            var13 = var4.readUShortSmart();
+            if (var13 == 0) {
+               break;
+            }
+
+            var4.readUnsignedByte();
          }
       }
    }

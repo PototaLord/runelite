@@ -81,7 +81,7 @@ public final class BoundaryObject {
    static final void doCheat(String var0) {
       if (var0.equalsIgnoreCase("toggleroof")) {
          ReflectionCheck.clientPreferences.roofsHidden = !ReflectionCheck.clientPreferences.roofsHidden;
-         WorldMapSection0.savePreferences();
+         WorldMapSection3.savePreferences();
          if (ReflectionCheck.clientPreferences.roofsHidden) {
             WorldMapIcon1.addGameMessage(99, "", "Roofs are now all hidden");
          } else {
@@ -101,13 +101,13 @@ public final class BoundaryObject {
          Client.showMouseOverText = !Client.showMouseOverText;
       }
 
-      if (Client.rights >= 2) {
+      if (Client.staffModLevel >= 2) {
          if (var0.equalsIgnoreCase("errortest")) {
             throw new RuntimeException();
          }
 
          if (var0.equalsIgnoreCase("showcoord")) {
-            class60.worldMap0.showCoord = !class60.worldMap0.showCoord;
+            class60.worldMap.showCoord = !class60.worldMap.showCoord;
          }
 
          if (var0.equalsIgnoreCase("fpson")) {

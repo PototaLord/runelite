@@ -11,12 +11,14 @@ public class HealthBarDefinition extends DualNode {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   public static AbstractIndexCache field379;
+   @Export("HealthBarDefinition_archive")
+   public static AbstractArchive HealthBarDefinition_archive;
    @ObfuscatedName("f")
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   public static AbstractIndexCache field380;
+   @Export("HealthBarDefinition_spritesArchive")
+   public static AbstractArchive HealthBarDefinition_spritesArchive;
    @ObfuscatedName("q")
    @ObfuscatedSignature(
       signature = "Ler;"
@@ -112,15 +114,15 @@ public class HealthBarDefinition extends DualNode {
       signature = "(Lgr;I)V",
       garbageValue = "280763431"
    )
-   @Export("read")
-   public void read(Buffer var1) {
+   @Export("decode")
+   public void decode(Buffer var1) {
       while (true) {
          int var2 = var1.readUnsignedByte();
          if (var2 == 0) {
             return;
          }
 
-         this.readNext(var1, var2);
+         this.decodeNext(var1, var2);
       }
    }
 
@@ -129,8 +131,8 @@ public class HealthBarDefinition extends DualNode {
       signature = "(Lgr;IB)V",
       garbageValue = "10"
    )
-   @Export("readNext")
-   void readNext(Buffer var1, int var2) {
+   @Export("decodeNext")
+   void decodeNext(Buffer var1, int var2) {
       if (var2 == 1) {
          var1.readUnsignedShort();
       } else if (var2 == 2) {
@@ -171,7 +173,7 @@ public class HealthBarDefinition extends DualNode {
          if (var1 != null) {
             return var1;
          } else {
-            var1 = class322.readSprite(field380, this.spriteId1, 0);
+            var1 = class322.readSprite(HealthBarDefinition_spritesArchive, this.spriteId1, 0);
             if (var1 != null) {
                HealthBarDefinition_cachedSprites.put(var1, (long)this.spriteId1);
             }
@@ -195,7 +197,7 @@ public class HealthBarDefinition extends DualNode {
          if (var1 != null) {
             return var1;
          } else {
-            var1 = class322.readSprite(field380, this.spriteId2, 0);
+            var1 = class322.readSprite(HealthBarDefinition_spritesArchive, this.spriteId2, 0);
             if (var1 != null) {
                HealthBarDefinition_cachedSprites.put(var1, (long)this.spriteId2);
             }

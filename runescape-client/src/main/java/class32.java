@@ -25,10 +25,10 @@ public class class32 {
          var0 -= 1000;
          var3 = Huffman.getWidget(Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize]);
       } else {
-         var3 = var2 ? WorldMapIcon1.field1030 : class12.field1111;
+         var3 = var2 ? WorldMapIcon1.field1030 : GrandExchangeOfferAgeComparator.field1111;
       }
 
-      class22.method295(var3);
+      WorldMapRectangle.method295(var3);
       if (var0 != ScriptOpcodes.CC_SETOBJECT && var0 != ScriptOpcodes.CC_SETOBJECT_NONUM && var0 != ScriptOpcodes.CC_SETOBJECT_ALWAYS_NUM) {
          if (var0 == ScriptOpcodes.CC_SETNPCHEAD) {
             var3.modelType = 2;

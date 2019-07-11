@@ -139,10 +139,11 @@ public class SlayerPlugin extends Plugin
 	private static final String TASK_COMMAND_STRING = "!task";
 	private static final Pattern TASK_STRING_VALIDATION = Pattern.compile("[^a-zA-Z0-9' -]");
 	private static final int TASK_STRING_MAX_LENGTH = 50;
+	private static final String POINTS_COMMAND_STRING = "!points";
 
 	// Superiors
 	@VisibleForTesting
-	static List<String> SUPERIOR_SLAYER_MONSTERS = Arrays.asList(
+	static final List<String> SUPERIOR_SLAYER_MONSTERS = Arrays.asList(
 		"crushing hand",
 		"chasm crawler",
 		"screaming banshee",
@@ -239,10 +240,10 @@ public class SlayerPlugin extends Plugin
 	private int cachedPoints;
 	private Instant infoTimer;
 	private List<String> targetNames = new ArrayList<>();
-	private List<Integer> targetIds = new ArrayList<>();
+	private final List<Integer> targetIds = new ArrayList<>();
 	private boolean checkAsTokens = true;
 
-	private List<NPCPresence> lingeringPresences = new ArrayList<>();
+	private final List<NPCPresence> lingeringPresences = new ArrayList<>();
 	private SlayerXpDropLookup slayerXpDropLookup = null;
 
 	private SlayerTaskPanel panel;
@@ -280,6 +281,8 @@ public class SlayerPlugin extends Plugin
 	private boolean taskCommand;
 	private String taskName;
 	private String taskLocation;
+	@Setter(AccessLevel.PACKAGE)
+	private boolean pointsCommand;
 	private int amount;
 	private int initialAmount;
 	private int lastCertainAmount;
@@ -316,6 +319,8 @@ public class SlayerPlugin extends Plugin
 		clientToolbar.addNavigation(navButton);
 
 		chatCommandManager.registerCommandAsync(TASK_COMMAND_STRING, this::taskLookup, this::taskSubmit);
+
+		chatCommandManager.registerCommandAsync(POINTS_COMMAND_STRING, this::pointsLookup); //here
 	}
 
 	@Override
@@ -329,6 +334,7 @@ public class SlayerPlugin extends Plugin
 		clearTrackedNPCs();
 
 		chatCommandManager.unregisterCommand(TASK_COMMAND_STRING);
+		chatCommandManager.unregisterCommand(POINTS_COMMAND_STRING);
 		clientToolbar.removeNavigation(navButton);
 	}
 
@@ -1121,6 +1127,44 @@ public class SlayerPlugin extends Plugin
 		client.refreshChat();
 	}
 
+	void pointsLookup(ChatMessage chatMessage, String message)
+	{
+		if (!this.pointsCommand)
+		{
+			return;
+		}
+
+		ChatMessageType type = chatMessage.getType();
+
+		final String player;
+		if (type.equals(ChatMessageType.PRIVATECHATOUT))
+		{
+			player = client.getLocalPlayer().getName();
+		}
+		else
+		{
+			player = Text.removeTags(chatMessage.getName())
+					.replace('\u00A0', ' ');
+		}
+
+		if (Integer.toString(getPoints()) == null)
+		{
+			return;
+		}
+
+		String response = new ChatMessageBuilder()
+				.append(ChatColorType.NORMAL)
+				.append("Slayer Points: ")
+				.append(ChatColorType.HIGHLIGHT)
+				.append(Integer.toString(getPoints()))
+				.build();
+
+		final MessageNode messageNode = chatMessage.getMessageNode();
+		messageNode.setRuneLiteFormatMessage(response);
+		chatMessageManager.update(messageNode);
+		client.refreshChat();
+	}
+
 	/* package access method for changing the pause state of the time tracker for the current task */
 	void setPaused(boolean paused)
 	{
@@ -1208,6 +1252,7 @@ public class SlayerPlugin extends Plugin
 		this.drawMinimapNames = config.drawMinimapNames();
 		this.weaknessPrompt = config.weaknessPrompt();
 		this.taskCommand = config.taskCommand();
+		this.pointsCommand = config.pointsCommand();
 		this.taskName = config.taskName();
 		this.amount = config.amount();
 		this.initialAmount = config.initialAmount();

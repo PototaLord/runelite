@@ -27,9 +27,9 @@ package net.runelite.api;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
@@ -1354,6 +1354,20 @@ public interface Client extends GameShell
 	void setInterpolateObjectAnimations(boolean interpolate);
 
 	/**
+	 * Checks whether animation smoothing is enabled for widgets.
+	 *
+	 * @return true if widget animation smoothing is enabled, false otherwise
+	 */
+	boolean isInterpolateWidgetAnimations();
+
+	/**
+	 * Sets the animation smoothing state for widgets.
+	 *
+	 * @param interpolate the new smoothing state
+	 */
+	void setInterpolateWidgetAnimations(boolean interpolate);
+
+	/**
 	 * Checks whether the logged in player is in an instanced region.
 	 *
 	 * @return true if the player is in instanced region, false otherwise
@@ -1677,7 +1691,7 @@ public interface Client extends GameShell
 	/**
 	 * Set spells excluded from above hiding
 	 */
-	void setUnhiddenCasts(HashSet<String> casts);
+	void setUnhiddenCasts(Set<String> casts);
 	
 	/**
 	 * Sorts the current menu entries in the same way the client does this.
@@ -1685,4 +1699,13 @@ public interface Client extends GameShell
 	 */
 	void sortMenuEntries();
 
+	/**
+	 * Add player to friendlist
+	 */
+	void addFriend(String name);
+
+	/**
+	 * Remove player from friendlist
+	 */
+	void removeFriend(String name);
 }

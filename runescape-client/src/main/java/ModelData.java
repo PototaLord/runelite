@@ -532,17 +532,17 @@ public class ModelData extends Entity {
          var50 = var2.readUnsignedByte();
          var51 = 0;
          if ((var50 & 1) != 0) {
-            var51 = var3.method47();
+            var51 = var3.readShortSmart();
          }
 
          var52 = 0;
          if ((var50 & 2) != 0) {
-            var52 = var4.method47();
+            var52 = var4.readShortSmart();
          }
 
          var53 = 0;
          if ((var50 & 4) != 0) {
-            var53 = var5.method47();
+            var53 = var5.readShortSmart();
          }
 
          this.verticesX[var49] = var46 + var51;
@@ -602,9 +602,9 @@ public class ModelData extends Entity {
       for (var53 = 0; var53 < var10; ++var53) {
          var54 = var3.readUnsignedByte();
          if (var54 == 1) {
-            var49 = var2.method47() + var52;
-            var50 = var2.method47() + var49;
-            var51 = var2.method47() + var50;
+            var49 = var2.readShortSmart() + var52;
+            var50 = var2.readShortSmart() + var49;
+            var51 = var2.readShortSmart() + var50;
             var52 = var51;
             this.indices1[var53] = var49;
             this.indices2[var53] = var50;
@@ -613,7 +613,7 @@ public class ModelData extends Entity {
 
          if (var54 == 2) {
             var50 = var51;
-            var51 = var2.method47() + var52;
+            var51 = var2.readShortSmart() + var52;
             var52 = var51;
             this.indices1[var53] = var49;
             this.indices2[var53] = var50;
@@ -622,7 +622,7 @@ public class ModelData extends Entity {
 
          if (var54 == 3) {
             var49 = var51;
-            var51 = var2.method47() + var52;
+            var51 = var2.readShortSmart() + var52;
             var52 = var51;
             this.indices1[var53] = var49;
             this.indices2[var53] = var50;
@@ -633,7 +633,7 @@ public class ModelData extends Entity {
             int var55 = var49;
             var49 = var50;
             var50 = var55;
-            var51 = var2.method47() + var52;
+            var51 = var2.readShortSmart() + var52;
             var52 = var51;
             this.indices1[var53] = var49;
             this.indices2[var53] = var55;
@@ -790,17 +790,17 @@ public class ModelData extends Entity {
          var39 = var4.readUnsignedByte();
          var40 = 0;
          if ((var39 & 1) != 0) {
-            var40 = var5.method47();
+            var40 = var5.readShortSmart();
          }
 
          var41 = 0;
          if ((var39 & 2) != 0) {
-            var41 = var6.method47();
+            var41 = var6.readShortSmart();
          }
 
          var42 = 0;
          if ((var39 & 4) != 0) {
-            var42 = var7.method47();
+            var42 = var7.readShortSmart();
          }
 
          this.verticesX[var38] = var35 + var40;
@@ -869,9 +869,9 @@ public class ModelData extends Entity {
       for (var42 = 0; var42 < var10; ++var42) {
          var43 = var5.readUnsignedByte();
          if (var43 == 1) {
-            var38 = var4.method47() + var41;
-            var39 = var4.method47() + var38;
-            var40 = var4.method47() + var39;
+            var38 = var4.readShortSmart() + var41;
+            var39 = var4.readShortSmart() + var38;
+            var40 = var4.readShortSmart() + var39;
             var41 = var40;
             this.indices1[var42] = var38;
             this.indices2[var42] = var39;
@@ -880,7 +880,7 @@ public class ModelData extends Entity {
 
          if (var43 == 2) {
             var39 = var40;
-            var40 = var4.method47() + var41;
+            var40 = var4.readShortSmart() + var41;
             var41 = var40;
             this.indices1[var42] = var38;
             this.indices2[var42] = var39;
@@ -889,7 +889,7 @@ public class ModelData extends Entity {
 
          if (var43 == 3) {
             var38 = var40;
-            var40 = var4.method47() + var41;
+            var40 = var4.readShortSmart() + var41;
             var41 = var40;
             this.indices1[var42] = var38;
             this.indices2[var42] = var39;
@@ -900,7 +900,7 @@ public class ModelData extends Entity {
             var44 = var38;
             var38 = var39;
             var39 = var44;
-            var40 = var4.method47() + var41;
+            var40 = var4.readShortSmart() + var41;
             var41 = var40;
             this.indices1[var42] = var38;
             this.indices2[var42] = var44;
@@ -1119,30 +1119,30 @@ public class ModelData extends Entity {
    void method208() {
       int[] var1;
       int var2;
-      int var10002;
-      int var3;
+      int var10003;
       int var4;
+      int var5;
       if (this.field555 != null) {
          var1 = new int[256];
          var2 = 0;
 
-         for (var3 = 0; var3 < this.verticesCount; ++var3) {
-            var4 = this.field555[var3];
-            var10002 = var1[var4]++;
-            if (var4 > var2) {
-               var2 = var4;
+         for (var4 = 0; var4 < this.verticesCount; ++var4) {
+            var5 = this.field555[var4];
+            var10003 = var1[var5]++;
+            if (var5 > var2) {
+               var2 = var5;
             }
          }
 
          this.vertexLabels = new int[var2 + 1][];
 
-         for (var3 = 0; var3 <= var2; ++var3) {
-            this.vertexLabels[var3] = new int[var1[var3]];
-            var1[var3] = 0;
+         for (var4 = 0; var4 <= var2; ++var4) {
+            this.vertexLabels[var4] = new int[var1[var4]];
+            var1[var4] = 0;
          }
 
-         for (var3 = 0; var3 < this.verticesCount; this.vertexLabels[var4][var1[var4]++] = var3++) {
-            var4 = this.field555[var3];
+         for (var4 = 0; var4 < this.verticesCount; this.vertexLabels[var5][var1[var5]++] = var4++) {
+            var5 = this.field555[var4];
          }
 
          this.field555 = null;
@@ -1152,23 +1152,23 @@ public class ModelData extends Entity {
          var1 = new int[256];
          var2 = 0;
 
-         for (var3 = 0; var3 < this.faceCount; ++var3) {
-            var4 = this.field556[var3];
-            var10002 = var1[var4]++;
-            if (var4 > var2) {
-               var2 = var4;
+         for (var4 = 0; var4 < this.faceCount; ++var4) {
+            var5 = this.field556[var4];
+            var10003 = var1[var5]++;
+            if (var5 > var2) {
+               var2 = var5;
             }
          }
 
          this.faceLabelsAlpha = new int[var2 + 1][];
 
-         for (var3 = 0; var3 <= var2; ++var3) {
-            this.faceLabelsAlpha[var3] = new int[var1[var3]];
-            var1[var3] = 0;
+         for (var4 = 0; var4 <= var2; ++var4) {
+            this.faceLabelsAlpha[var4] = new int[var1[var4]];
+            var1[var4] = 0;
          }
 
-         for (var3 = 0; var3 < this.faceCount; this.faceLabelsAlpha[var4][var1[var4]++] = var3++) {
-            var4 = this.field556[var3];
+         for (var4 = 0; var4 < this.faceCount; this.faceLabelsAlpha[var5][var1[var5]++] = var4++) {
+            var5 = this.field556[var4];
          }
 
          this.field556 = null;
@@ -1225,12 +1225,12 @@ public class ModelData extends Entity {
    @ObfuscatedName("z")
    public void method213(int var1, int var2, int var3) {
       for (int var4 = 0; var4 < this.verticesCount; ++var4) {
-         int[] var10000 = this.verticesX;
-         var10000[var4] += var1;
-         var10000 = this.verticesY;
-         var10000[var4] += var2;
-         var10000 = this.verticesZ;
-         var10000[var4] += var3;
+         int[] var5 = this.verticesX;
+         var5[var4] += var1;
+         var5 = this.verticesY;
+         var5[var4] += var2;
+         var5 = this.verticesZ;
+         var5[var4] += var3;
       }
 
       this.invalidate();
@@ -1238,9 +1238,9 @@ public class ModelData extends Entity {
 
    @ObfuscatedName("j")
    @Export("recolor")
-   public void recolor(short var1, short var2) {
+   public void recolor(short from, short var2) {
       for (int var3 = 0; var3 < this.faceCount; ++var3) {
-         if (this.faceColors[var3] == var1) {
+         if (this.faceColors[var3] == from) {
             this.faceColors[var3] = var2;
          }
       }
@@ -1249,10 +1249,10 @@ public class ModelData extends Entity {
 
    @ObfuscatedName("s")
    @Export("retexture")
-   public void retexture(short var1, short var2) {
+   public void retexture(short from, short var2) {
       if (this.faceTextures != null) {
          for (int var3 = 0; var3 < this.faceCount; ++var3) {
-            if (this.faceTextures[var3] == var1) {
+            if (this.faceTextures[var3] == from) {
                this.faceTextures[var3] = var2;
             }
          }
@@ -1606,8 +1606,8 @@ public class ModelData extends Entity {
    @ObfuscatedSignature(
       signature = "(Lir;II)Ldw;"
    )
-   public static ModelData method2788(AbstractIndexCache var0, int var1, int var2) {
-      byte[] var3 = var0.takeRecord(var1, var2);
+   public static ModelData method2788(AbstractArchive var0, int var1, int var2) {
+      byte[] var3 = var0.takeFile(var1, var2);
       return var3 == null ? null : new ModelData(var3);
    }
 

@@ -44,7 +44,7 @@ public final class Bzip2Decompressor {
       int var2 = var0.field70;
       int var3 = var0.field78;
       int var4 = var0.field76;
-      int[] var5 = WorldMapSection0.field1056;
+      int[] var5 = WorldMapSection3.field1056;
       int var6 = var0.field75;
       byte[] var7 = var0.field65;
       int var8 = var0.field66;
@@ -159,7 +159,7 @@ public final class Bzip2Decompressor {
       var0.field70 = var2;
       var0.field78 = var3;
       var0.field76 = var4;
-      WorldMapSection0.field1056 = var5;
+      WorldMapSection3.field1056 = var5;
       var0.field75 = var6;
       var0.field65 = var7;
       var0.field66 = var8;
@@ -194,8 +194,8 @@ public final class Bzip2Decompressor {
       int[] var21 = null;
       int[] var22 = null;
       var0.field73 = 1;
-      if (WorldMapSection0.field1056 == null) {
-         WorldMapSection0.field1056 = new int[var0.field73 * 100000];
+      if (WorldMapSection3.field1056 == null) {
+         WorldMapSection3.field1056 = new int[var0.field73 * 100000];
       }
 
       boolean var23 = true;
@@ -292,49 +292,49 @@ public final class Bzip2Decompressor {
             }
 
             int var33;
-            int var50;
-            for (var50 = 0; var50 < var28; ++var50) {
-               var33 = method3708(5, var0);
+            int var52;
+            for (var33 = 0; var33 < var28; ++var33) {
+               var52 = method3708(5, var0);
 
                for (var25 = 0; var25 < var27; ++var25) {
                   while (true) {
                      var24 = method3711(var0);
                      if (var24 == 0) {
-                        var0.field88[var50][var25] = (byte)var33;
+                        var0.field88[var33][var25] = (byte)var52;
                         break;
                      }
 
                      var24 = method3711(var0);
                      if (var24 == 0) {
-                        ++var33;
+                        ++var52;
                      } else {
-                        --var33;
+                        --var52;
                      }
                   }
                }
             }
 
-            for (var50 = 0; var50 < var28; ++var50) {
-               byte var51 = 32;
-               byte var34 = 0;
+            for (var33 = 0; var33 < var28; ++var33) {
+               byte var34 = 32;
+               byte var35 = 0;
 
                for (var25 = 0; var25 < var27; ++var25) {
-                  if (var0.field88[var50][var25] > var34) {
-                     var34 = var0.field88[var50][var25];
+                  if (var0.field88[var33][var25] > var35) {
+                     var35 = var0.field88[var33][var25];
                   }
 
-                  if (var0.field88[var50][var25] < var51) {
-                     var51 = var0.field88[var50][var25];
+                  if (var0.field88[var33][var25] < var34) {
+                     var34 = var0.field88[var33][var25];
                   }
                }
 
-               method3706(var0.field89[var50], var0.field90[var50], var0.field91[var50], var0.field88[var50], var51, var34, var27);
-               var0.field92[var50] = var51;
+               method3706(var0.field89[var33], var0.field90[var33], var0.field91[var33], var0.field88[var33], var34, var35, var27);
+               var0.field92[var33] = var34;
             }
 
-            var33 = var0.field80 + 1;
-            int var52 = -1;
-            byte var35 = 0;
+            var52 = var0.field80 + 1;
+            int var53 = -1;
+            byte var54 = 0;
 
             for (var25 = 0; var25 <= 255; ++var25) {
                var0.field77[var25] = 0;
@@ -355,17 +355,17 @@ public final class Bzip2Decompressor {
 
             int var39 = 0;
             byte var40;
-            if (var35 == 0) {
-               ++var52;
-               var35 = 50;
-               var40 = var0.field86[var52];
+            if (var54 == 0) {
+               ++var53;
+               var54 = 50;
+               var40 = var0.field86[var53];
                var19 = var0.field92[var40];
                var20 = var0.field89[var40];
                var22 = var0.field91[var40];
                var21 = var0.field90[var40];
             }
 
-            int var41 = var35 - 1;
+            int var41 = var54 - 1;
             int var42 = var19;
 
             int var43;
@@ -378,46 +378,46 @@ public final class Bzip2Decompressor {
             int var45 = var22[var43 - var21[var42]];
 
             while (true) {
-               int[] var10000;
-               int var54;
-               while (var45 != var33) {
-                  int var46;
-                  int var47;
+               int[] var46;
+               int var48;
+               while (var45 != var52) {
+                  int var49;
                   if (var45 != 0 && var45 != 1) {
-                     var46 = var45 - 1;
-                     int var48;
-                     if (var46 < 16) {
-                        var47 = var0.field85[0];
+                     var48 = var45 - 1;
+                     int var10003;
+                     int var50;
+                     if (var48 < 16) {
+                        var49 = var0.field85[0];
 
-                        for (var24 = var0.field84[var47 + var46]; var46 > 3; var46 -= 4) {
-                           var48 = var47 + var46;
-                           var0.field84[var48] = var0.field84[var48 - 1];
-                           var0.field84[var48 - 1] = var0.field84[var48 - 2];
-                           var0.field84[var48 - 2] = var0.field84[var48 - 3];
-                           var0.field84[var48 - 3] = var0.field84[var48 - 4];
+                        for (var24 = var0.field84[var49 + var48]; var48 > 3; var48 -= 4) {
+                           var50 = var49 + var48;
+                           var0.field84[var50] = var0.field84[var50 - 1];
+                           var0.field84[var50 - 1] = var0.field84[var50 - 2];
+                           var0.field84[var50 - 2] = var0.field84[var50 - 3];
+                           var0.field84[var50 - 3] = var0.field84[var50 - 4];
                         }
 
-                        while (var46 > 0) {
-                           var0.field84[var47 + var46] = var0.field84[var47 + var46 - 1];
-                           --var46;
+                        while (var48 > 0) {
+                           var0.field84[var49 + var48] = var0.field84[var49 + var48 - 1];
+                           --var48;
                         }
 
-                        var0.field84[var47] = var24;
+                        var0.field84[var49] = var24;
                      } else {
-                        var48 = var46 / 16;
-                        int var49 = var46 % 16;
-                        var47 = var0.field85[var48] + var49;
+                        var50 = var48 / 16;
+                        int var51 = var48 % 16;
+                        var49 = var0.field85[var50] + var51;
 
-                        for (var24 = var0.field84[var47]; var47 > var0.field85[var48]; --var47) {
-                           var0.field84[var47] = var0.field84[var47 - 1];
+                        for (var24 = var0.field84[var49]; var49 > var0.field85[var50]; --var49) {
+                           var0.field84[var49] = var0.field84[var49 - 1];
                         }
 
-                        for (var54 = var0.field85[var48]++; var48 > 0; --var48) {
-                           var54 = var0.field85[var48]--;
-                           var0.field84[var0.field85[var48]] = var0.field84[var0.field85[var48 - 1] + 16 - 1];
+                        for (var10003 = var0.field85[var50]++; var50 > 0; --var50) {
+                           var10003 = var0.field85[var50]--;
+                           var0.field84[var0.field85[var50]] = var0.field84[var0.field85[var50 - 1] + 16 - 1];
                         }
 
-                        var54 = var0.field85[0]--;
+                        var10003 = var0.field85[0]--;
                         var0.field84[var0.field85[0]] = var24;
                         if (var0.field85[0] == 0) {
                            var36 = 4095;
@@ -433,13 +433,13 @@ public final class Bzip2Decompressor {
                         }
                      }
 
-                     var54 = var0.field77[var0.field83[var24 & 255] & 255]++;
-                     WorldMapSection0.field1056[var39] = var0.field83[var24 & 255] & 255;
+                     var10003 = var0.field77[var0.field83[var24 & 255] & 255]++;
+                     WorldMapSection3.field1056[var39] = var0.field83[var24 & 255] & 255;
                      ++var39;
                      if (var41 == 0) {
-                        ++var52;
+                        ++var53;
                         var41 = 50;
-                        var40 = var0.field86[var52];
+                        var40 = var0.field86[var53];
                         var19 = var0.field92[var40];
                         var20 = var0.field89[var40];
                         var22 = var0.field91[var40];
@@ -456,21 +456,21 @@ public final class Bzip2Decompressor {
 
                      var45 = var22[var43 - var21[var42]];
                   } else {
-                     var46 = -1;
-                     var47 = 1;
+                     var48 = -1;
+                     var49 = 1;
 
                      do {
                         if (var45 == 0) {
-                           var46 += var47;
+                           var48 += var49;
                         } else if (var45 == 1) {
-                           var46 += var47 * 2;
+                           var48 += var49 * 2;
                         }
 
-                        var47 *= 2;
+                        var49 *= 2;
                         if (var41 == 0) {
-                           ++var52;
+                           ++var53;
                            var41 = 50;
-                           var40 = var0.field86[var52];
+                           var40 = var0.field86[var53];
                            var19 = var0.field92[var40];
                            var20 = var0.field89[var40];
                            var22 = var0.field91[var40];
@@ -488,12 +488,12 @@ public final class Bzip2Decompressor {
                         var45 = var22[var43 - var21[var42]];
                      } while(var45 == 0 || var45 == 1);
 
-                     ++var46;
+                     ++var48;
                      var24 = var0.field83[var0.field84[var0.field85[0]] & 255];
-                     var10000 = var0.field77;
+                     var46 = var0.field77;
 
-                     for (var10000[var24 & 255] += var46; var46 > 0; --var46) {
-                        WorldMapSection0.field1056[var39] = var24 & 255;
+                     for (var46[var24 & 255] += var48; var48 > 0; --var48) {
+                        WorldMapSection3.field1056[var39] = var24 & 255;
                         ++var39;
                      }
                   }
@@ -508,21 +508,21 @@ public final class Bzip2Decompressor {
                }
 
                for (var25 = 1; var25 <= 256; ++var25) {
-                  var10000 = var0.field79;
-                  var10000[var25] += var0.field79[var25 - 1];
+                  var46 = var0.field79;
+                  var46[var25] += var0.field79[var25 - 1];
                }
 
                for (var25 = 0; var25 < var39; ++var25) {
-                  var24 = (byte)(WorldMapSection0.field1056[var25] & 255);
-                  var10000 = WorldMapSection0.field1056;
-                  int var53 = var0.field79[var24 & 255];
-                  var10000[var53] |= var25 << 8;
-                  var54 = var0.field79[var24 & 255]++;
+                  var24 = (byte)(WorldMapSection3.field1056[var25] & 255);
+                  var46 = WorldMapSection3.field1056;
+                  var48 = var0.field79[var24 & 255];
+                  var46[var48] |= var25 << 8;
+                  ++var0.field79[var24 & 255];
                }
 
-               var0.field75 = WorldMapSection0.field1056[var0.field74] >> 8;
+               var0.field75 = WorldMapSection3.field1056[var0.field74] >> 8;
                var0.field78 = 0;
-               var0.field75 = WorldMapSection0.field1056[var0.field75];
+               var0.field75 = WorldMapSection3.field1056[var0.field75];
                var0.field76 = (byte)(var0.field75 & 255);
                var0.field75 >>= 8;
                ++var0.field78;

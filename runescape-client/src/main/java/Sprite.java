@@ -47,8 +47,8 @@ public final class Sprite extends Rasterizer2D {
    @ObfuscatedSignature(
       signature = "()Lln;"
    )
-   @Export("copy")
-   public Sprite copy() {
+   @Export("mirrorHorizontally")
+   public Sprite mirrorHorizontally() {
       Sprite var1 = new Sprite(this.subWidth, this.subHeight);
       var1.width = this.width;
       var1.height = this.height;
@@ -181,7 +181,8 @@ public final class Sprite extends Rasterizer2D {
    }
 
    @ObfuscatedName("l")
-   public void method307(int var1) {
+   @Export("outline")
+   public void outline(int color) {
       int[] var2 = new int[this.subWidth * this.subHeight];
       int var3 = 0;
 
@@ -190,13 +191,13 @@ public final class Sprite extends Rasterizer2D {
             int var6 = this.pixels[var3];
             if (var6 == 0) {
                if (var5 > 0 && this.pixels[var3 - 1] != 0) {
-                  var6 = var1;
+                  var6 = color;
                } else if (var4 > 0 && this.pixels[var3 - this.subWidth] != 0) {
-                  var6 = var1;
+                  var6 = color;
                } else if (var5 < this.subWidth - 1 && this.pixels[var3 + 1] != 0) {
-                  var6 = var1;
+                  var6 = color;
                } else if (var4 < this.subHeight - 1 && this.pixels[var3 + this.subWidth] != 0) {
-                  var6 = var1;
+                  var6 = color;
                }
             }
 
@@ -208,13 +209,14 @@ public final class Sprite extends Rasterizer2D {
    }
 
    @ObfuscatedName("e")
-   public void method308(int var1) {
+   @Export("shadow")
+   public void shadow(int color) {
       for (int var2 = this.subHeight - 1; var2 > 0; --var2) {
          int var3 = var2 * this.subWidth;
 
          for (int var4 = this.subWidth - 1; var4 > 0; --var4) {
             if (this.pixels[var4 + var3] == 0 && this.pixels[var4 + var3 - 1 - this.subWidth] != 0) {
-               this.pixels[var4 + var3] = var1;
+               this.pixels[var4 + var3] = color;
             }
          }
       }
@@ -666,68 +668,70 @@ public final class Sprite extends Rasterizer2D {
       int var9 = var2 < 0 ? -var2 : 0;
       int var10 = var2 + this.subHeight <= var6 ? this.subHeight : var6 - var2;
       int var11 = var1 < 0 ? -var1 : 0;
+      int var12;
       if (this.subWidth + var1 <= var5) {
-         int var12 = this.subWidth;
+         var12 = this.subWidth;
       } else {
          int var10000 = var5 - var1;
       }
 
-      int var13 = var3 + var11 + (var9 + var2 + var4) * Rasterizer2D.Rasterizer2D_width + var1;
-      int var14 = var9 + var2;
+      var12 = var3 + var11 + (var9 + var2 + var4) * Rasterizer2D.Rasterizer2D_width + var1;
+      int var13 = var9 + var2;
 
-      for (int var15 = var9; var15 < var10; ++var15) {
-         int var16 = var7[var14];
-         int var17 = var8[var14++];
-         int var18 = var13;
+      for (int var14 = var9; var14 < var10; ++var14) {
+         int var15 = var7[var13];
+         int var16 = var8[var13++];
+         int var17 = var12;
+         int var18;
+         if (var1 < var15) {
+            var18 = var15 - var1;
+            var17 = var12 + (var18 - var11);
+         } else {
+            var18 = var11;
+         }
+
          int var19;
-         if (var1 < var16) {
-            var19 = var16 - var1;
-            var18 = var13 + (var19 - var11);
+         if (this.subWidth + var1 <= var15 + var16) {
+            var19 = this.subWidth;
          } else {
-            var19 = var11;
+            var19 = var15 + var16 - var1;
          }
 
-         int var20;
-         if (this.subWidth + var1 <= var16 + var17) {
-            var20 = this.subWidth;
-         } else {
-            var20 = var16 + var17 - var1;
-         }
-
-         for (int var21 = var19; var21 < var20; ++var21) {
-            int var22 = this.pixels[var21 + var15 * this.subWidth];
-            if (var22 != 0) {
-               Rasterizer2D.Rasterizer2D_pixels[var18++] = var22;
+         for (int var20 = var18; var20 < var19; ++var20) {
+            int var21 = this.pixels[var20 + var14 * this.subWidth];
+            if (var21 != 0) {
+               Rasterizer2D.Rasterizer2D_pixels[var17++] = var21;
             } else {
-               ++var18;
+               ++var17;
             }
          }
 
-         var13 += Rasterizer2D.Rasterizer2D_width;
+         var12 += Rasterizer2D.Rasterizer2D_width;
       }
 
    }
 
    @ObfuscatedName("ay")
-   public void method315(int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8, int[] var9, int[] var10) {
+   @Export("drawRotatedMaskedCenteredAround")
+   public void drawRotatedMaskedCenteredAround(int x, int y, int maskWidth, int maskHeight, int spriteWidth, int spriteHeight, int rotation, int var8, int[] maskXStarts, int[] maskXWidths) {
       try {
-         int var11 = -var3 / 2;
-         int var12 = -var4 / 2;
-         int var13 = (int)(Math.sin((double)var7 / 326.11D) * 65536.0D);
-         int var14 = (int)(Math.cos((double)var7 / 326.11D) * 65536.0D);
+         int var11 = -maskWidth / 2;
+         int var12 = -maskHeight / 2;
+         int var13 = (int)(Math.sin((double)rotation / 326.11D) * 65536.0D);
+         int var14 = (int)(Math.cos((double)rotation / 326.11D) * 65536.0D);
          var13 = var13 * var8 >> 8;
          var14 = var14 * var8 >> 8;
-         int var15 = var12 * var13 + var11 * var14 + (var5 << 16);
-         int var16 = var12 * var14 - var11 * var13 + (var6 << 16);
-         int var17 = var1 + var2 * Rasterizer2D.Rasterizer2D_width;
+         int var15 = var12 * var13 + var11 * var14 + (spriteWidth << 16);
+         int var16 = var12 * var14 - var11 * var13 + (spriteHeight << 16);
+         int var17 = x + y * Rasterizer2D.Rasterizer2D_width;
 
-         for (var2 = 0; var2 < var4; ++var2) {
-            int var18 = var9[var2];
+         for (y = 0; y < maskHeight; ++y) {
+            int var18 = maskXStarts[y];
             int var19 = var17 + var18;
             int var20 = var15 + var14 * var18;
             int var21 = var16 - var13 * var18;
 
-            for (var1 = -var10[var2]; var1 < 0; ++var1) {
+            for (x = -maskXWidths[y]; x < 0; ++x) {
                Rasterizer2D.Rasterizer2D_pixels[var19++] = this.pixels[this.subWidth * (var21 >> 16) + (var20 >> 16)];
                var20 += var14;
                var21 -= var13;

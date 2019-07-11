@@ -1,5 +1,6 @@
 import java.applet.Applet;
 import java.net.URL;
+import net.runelite.mapping.Export;
 import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
@@ -18,7 +19,8 @@ public class FaceNormal {
    @ObfuscatedSignature(
       signature = "Lln;"
    )
-   static Sprite field345;
+   @Export("redHintArrowSprite")
+   static Sprite redHintArrowSprite;
    @ObfuscatedName("m")
    @ObfuscatedGetter(
       intValue = -2074333261
@@ -41,13 +43,13 @@ public class FaceNormal {
       garbageValue = "-1788849120"
    )
    static Script method3236(int var0, int var1, int var2) {
-      int var3 = UnitPriceComparator.method125(var1, var0);
-      Script var4 = WidgetGroupParent.method1175(var3, var0);
+      int var3 = GrandExchangeOfferUnitPriceComparator.method125(var1, var0);
+      Script var4 = InterfaceParent.method1175(var3, var0);
       if (var4 != null) {
          return var4;
       } else {
          var3 = PacketBuffer.method4081(var2, var0);
-         var4 = WidgetGroupParent.method1175(var3, var0);
+         var4 = InterfaceParent.method1175(var3, var0);
          return var4 != null ? var4 : null;
       }
    }
@@ -81,8 +83,8 @@ public class FaceNormal {
          }
       } else if (var1 == 1) {
          try {
-            Applet var3 = class50.field1159;
-            Object[] var4 = new Object[]{(new URL(class50.field1159.getCodeBase(), var0)).toString()};
+            Applet var3 = class50.applet;
+            Object[] var4 = new Object[]{(new URL(class50.applet.getCodeBase(), var0)).toString()};
             Object var5 = JSObject.getWindow(var3).call(var2, var4);
             return var5 != null;
          } catch (Throwable var7) {
@@ -90,19 +92,19 @@ public class FaceNormal {
          }
       } else if (var1 == 2) {
          try {
-            class50.field1159.getAppletContext().showDocument(new URL(class50.field1159.getCodeBase(), var0), "_blank");
+            class50.applet.getAppletContext().showDocument(new URL(class50.applet.getCodeBase(), var0), "_blank");
             return true;
          } catch (Exception var8) {
             return false;
          }
       } else if (var1 == 3) {
          try {
-            class46.method851(class50.field1159, "loggedout");
+            class46.method851(class50.applet, "loggedout");
          } catch (Throwable var10) {
          }
 
          try {
-            class50.field1159.getAppletContext().showDocument(new URL(class50.field1159.getCodeBase(), var0), "_top");
+            class50.applet.getAppletContext().showDocument(new URL(class50.applet.getCodeBase(), var0), "_top");
             return true;
          } catch (Exception var9) {
             return false;

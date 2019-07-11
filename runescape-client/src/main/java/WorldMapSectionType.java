@@ -13,22 +13,26 @@ public enum WorldMapSectionType implements Enumerated {
    @ObfuscatedSignature(
       signature = "Lh;"
    )
-   field1100(1, (byte)0),
+   @Export("WORLDMAPSECTIONTYPE0")
+   WORLDMAPSECTIONTYPE0(1, (byte)0),
    @ObfuscatedName("f")
    @ObfuscatedSignature(
       signature = "Lh;"
    )
-   field1101(0, (byte)1),
+   @Export("WORLDMAPSECTIONTYPE1")
+   WORLDMAPSECTIONTYPE1(0, (byte)1),
    @ObfuscatedName("q")
    @ObfuscatedSignature(
       signature = "Lh;"
    )
-   field1102(3, (byte)2),
+   @Export("WORLDMAPSECTIONTYPE2")
+   WORLDMAPSECTIONTYPE2(3, (byte)2),
    @ObfuscatedName("w")
    @ObfuscatedSignature(
       signature = "Lh;"
    )
-   field1103(2, (byte)3);
+   @Export("WORLDMAPSECTIONTYPE3")
+   WORLDMAPSECTIONTYPE3(2, (byte)3);
 
    @ObfuscatedName("e")
    @ObfuscatedSignature(
@@ -70,16 +74,17 @@ public enum WorldMapSectionType implements Enumerated {
    }
 
    @ObfuscatedName("m")
-   public static String method252(long var0) {
-      class211.field1126.setTime(new Date(var0));
-      int var2 = class211.field1126.get(7);
-      int var3 = class211.field1126.get(5);
-      int var4 = class211.field1126.get(2);
-      int var5 = class211.field1126.get(1);
-      int var6 = class211.field1126.get(11);
-      int var7 = class211.field1126.get(12);
-      int var8 = class211.field1126.get(13);
-      return class211.field1125[var2 - 1] + ", " + var3 / 10 + var3 % 10 + "-" + class211.field1124[0][var4] + "-" + var5 + " " + var6 / 10 + var6 % 10 + ":" + var7 / 10 + var7 % 10 + ":" + var8 / 10 + var8 % 10 + " GMT";
+   @Export("getDateString")
+   public static String getDateString(long millis) {
+      Calendar.Calendar_calendar.setTime(new Date(millis));
+      int var2 = Calendar.Calendar_calendar.get(7);
+      int var3 = Calendar.Calendar_calendar.get(5);
+      int var4 = Calendar.Calendar_calendar.get(2);
+      int var5 = Calendar.Calendar_calendar.get(1);
+      int var6 = Calendar.Calendar_calendar.get(11);
+      int var7 = Calendar.Calendar_calendar.get(12);
+      int var8 = Calendar.Calendar_calendar.get(13);
+      return Calendar.DAYS_OF_THE_WEEK[var2 - 1] + ", " + var3 / 10 + var3 % 10 + "-" + Calendar.MONTH_NAMES_ENGLISH_GERMAN[0][var4] + "-" + var5 + " " + var6 / 10 + var6 % 10 + ":" + var7 / 10 + var7 % 10 + ":" + var8 / 10 + var8 % 10 + " GMT";
    }
 
    @ObfuscatedName("w")
@@ -87,9 +92,10 @@ public enum WorldMapSectionType implements Enumerated {
       signature = "(IZIZI)V",
       garbageValue = "2102950996"
    )
-   static void method248(int var0, boolean var1, int var2, boolean var3) {
+   @Export("sortWorldList")
+   static void sortWorldList(int primaryMode, boolean primaryReversed, int secondaryMode, boolean secondaryReversed) {
       if (ItemContainer.worlds != null) {
-         class3.method42(0, ItemContainer.worlds.length - 1, var0, var1, var2, var3);
+         class3.doWorldSorting(0, ItemContainer.worlds.length - 1, primaryMode, primaryReversed, secondaryMode, secondaryReversed);
       }
 
    }
@@ -100,7 +106,7 @@ public enum WorldMapSectionType implements Enumerated {
       garbageValue = "-1520594673"
    )
    static int method253(int var0, Script var1, boolean var2) {
-      Widget var3 = var2 ? WorldMapIcon1.field1030 : class12.field1111;
+      Widget var3 = var2 ? WorldMapIcon1.field1030 : GrandExchangeOfferAgeComparator.field1111;
       if (var0 == ScriptOpcodes.CC_GETX) {
          Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = var3.x;
          return 1;
@@ -130,9 +136,9 @@ public enum WorldMapSectionType implements Enumerated {
       garbageValue = "1187868759"
    )
    static void method254() {
-      if (class60.worldMap0 != null) {
-         class60.worldMap0.method366(SoundSystem.plane, (Canvas.localPlayer.x >> 7) + class50.baseX, (Canvas.localPlayer.y >> 7) + GraphicsObject.baseY, false);
-         class60.worldMap0.loadCache();
+      if (class60.worldMap != null) {
+         class60.worldMap.method366(SoundSystem.plane, (Canvas.localPlayer.x >> 7) + class50.baseX, (Canvas.localPlayer.y >> 7) + GraphicsObject.baseY, false);
+         class60.worldMap.loadCache();
       }
 
    }

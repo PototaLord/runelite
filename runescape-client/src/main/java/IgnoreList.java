@@ -47,14 +47,14 @@ public class IgnoreList extends UserList {
       garbageValue = "32"
    )
    @Export("read")
-   public void read(Buffer var1, int var2) {
+   public void read(Buffer buffer, int var2) {
       while (true) {
-         if (var1.index < var2) {
-            int var3 = var1.readUnsignedByte();
+         if (buffer.index < var2) {
+            int var3 = buffer.readUnsignedByte();
             boolean var4 = (var3 & 1) == 1;
-            Username var5 = new Username(var1.readStringCp1252NullTerminated(), this.loginType);
-            Username var6 = new Username(var1.readStringCp1252NullTerminated(), this.loginType);
-            var1.readStringCp1252NullTerminated();
+            Username var5 = new Username(buffer.readStringCp1252NullTerminated(), this.loginType);
+            Username var6 = new Username(buffer.readStringCp1252NullTerminated(), this.loginType);
+            buffer.readStringCp1252NullTerminated();
             if (var5 != null && var5.hasCleanName()) {
                Ignored var7 = (Ignored)this.getByCurrentUsername(var5);
                if (var4) {
@@ -93,7 +93,8 @@ public class IgnoreList extends UserList {
       signature = "(Ljava/lang/CharSequence;IZB)I",
       garbageValue = "5"
    )
-   static int method5438(CharSequence var0, int var1, boolean var2) {
+   @Export("parseIntCustomRadix")
+   static int parseIntCustomRadix(CharSequence var0, int var1, boolean var2) {
       if (var1 >= 2 && var1 <= 36) {
          boolean var3 = false;
          boolean var4 = false;

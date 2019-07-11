@@ -1,9 +1,11 @@
 import net.runelite.mapping.Export;
+import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
 @ObfuscatedName("fe")
+@Implements("RouteStrategy")
 public abstract class RouteStrategy {
    @ObfuscatedName("l")
    @ObfuscatedGetter(
@@ -73,8 +75,8 @@ public abstract class RouteStrategy {
       garbageValue = "-602741260"
    )
    @Export("loadSpriteFlat")
-   static boolean loadSpriteFlat(AbstractIndexCache var0, int var1) {
-      byte[] var2 = var0.takeRecordFlat(var1);
+   static boolean loadSpriteFlat(AbstractArchive var0, int var1) {
+      byte[] var2 = var0.takeFileFlat(var1);
       if (var2 == null) {
          return false;
       } else {

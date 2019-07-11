@@ -4,11 +4,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Random;
 import net.runelite.mapping.Export;
+import net.runelite.mapping.Implements;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
 
 @ObfuscatedName("bp")
+@Implements("LoginScreenAnimation")
 public class LoginScreenAnimation {
    @ObfuscatedName("m")
    @ObfuscatedSignature(
@@ -510,7 +512,7 @@ public class LoginScreenAnimation {
       Varps.method4400(var5);
       var5.writeLong(var3.nextLong());
       var5.encryptRsa(class80.field1163, class80.field1164);
-      var7 = WorldMapRegion.method550(var2);
+      var7 = WorldMapRegion.stringCp1252NullTerminatedByteSize(var2);
       if (var7 % 8 != 0) {
          var7 += 8 - var7 % 8;
       }
@@ -522,11 +524,11 @@ public class LoginScreenAnimation {
       Buffer var9 = new Buffer(var4.index + var5.index + var8.index + 5);
       var9.writeByte(2);
       var9.writeByte(var4.index);
-      var9.method38(var4.array, 0, var4.index);
+      var9.writeBytes(var4.array, 0, var4.index);
       var9.writeByte(var5.index);
-      var9.method38(var5.array, 0, var5.index);
+      var9.writeBytes(var5.array, 0, var5.index);
       var9.writeShort(var8.index);
-      var9.method38(var8.array, 0, var8.index);
+      var9.writeBytes(var8.array, 0, var8.index);
       byte[] var10 = var9.array;
       int var11 = var10.length;
       StringBuilder var12 = new StringBuilder();
@@ -616,10 +618,10 @@ public class LoginScreenAnimation {
       if (var1 != null) {
          return var1;
       } else {
-         byte[] var2 = HitSplatDefinition.field382.takeRecord(32, var0);
+         byte[] var2 = HitSplatDefinition.HitSplatDefinition_archive.takeFile(32, var0);
          var1 = new HitSplatDefinition();
          if (var2 != null) {
-            var1.read(new Buffer(var2));
+            var1.decode(new Buffer(var2));
          }
 
          HitSplatDefinition.HitSplatDefinition_cached.put(var1, (long)var0);
@@ -635,6 +637,6 @@ public class LoginScreenAnimation {
    public static void method1780() {
       ItemDefinition.ItemDefinition_cached.clear();
       ItemDefinition.ItemDefinition_cachedModels.clear();
-      ItemDefinition.Sprite_cached.clear();
+      ItemDefinition.ItemDefinition_cachedSprites.clear();
    }
 }

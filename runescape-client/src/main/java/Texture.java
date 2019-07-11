@@ -10,8 +10,8 @@ public class Texture extends Node {
    @Export("Texture_animatedPixels")
    static int[] Texture_animatedPixels;
    @ObfuscatedName("o")
-   @Export("int1")
-   int int1;
+   @Export("averageRGB")
+   int averageRGB;
    @ObfuscatedName("u")
    boolean field893;
    @ObfuscatedName("g")
@@ -41,7 +41,7 @@ public class Texture extends Node {
    )
    Texture(Buffer var1) {
       this.isLoaded = false;
-      this.int1 = var1.readUnsignedShort();
+      this.averageRGB = var1.readUnsignedShort();
       this.field893 = var1.readUnsignedByte() == 1;
       int var2 = var1.readUnsignedByte();
       if (var2 >= 1 && var2 <= 4) {
@@ -86,10 +86,10 @@ public class Texture extends Node {
    @ObfuscatedSignature(
       signature = "(DILir;)Z"
    )
-   boolean method320(double var1, int var3, AbstractIndexCache var4) {
+   boolean method320(double var1, int var3, AbstractArchive var4) {
       int var5;
       for (var5 = 0; var5 < this.records.length; ++var5) {
-         if (var4.getRecordFlat(this.records[var5]) == null) {
+         if (var4.getFileFlat(this.records[var5]) == null) {
             return false;
          }
       }
@@ -184,8 +184,8 @@ public class Texture extends Node {
    }
 
    @ObfuscatedName("q")
-   @Export("Texture_animate")
-   void Texture_animate(int var1) {
+   @Export("animate")
+   void animate(int var1) {
       if (this.pixels != null) {
          short var2;
          int var3;

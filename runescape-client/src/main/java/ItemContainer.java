@@ -22,7 +22,8 @@ public class ItemContainer extends Node {
    @ObfuscatedSignature(
       signature = "Lit;"
    )
-   static IndexCache field434;
+   @Export("archive19")
+   static Archive archive19;
    @ObfuscatedName("f")
    @Export("ids")
    int[] ids;
@@ -51,22 +52,22 @@ public class ItemContainer extends Node {
    )
    @Export("getFrames")
    static Frames getFrames(int var0) {
-      Frames var1 = (Frames)SequenceDefinition.field775.get((long)var0);
+      Frames var1 = (Frames)SequenceDefinition.SequenceDefinition_cachedFrames.get((long)var0);
       if (var1 != null) {
          return var1;
       } else {
-         AbstractIndexCache var2 = SequenceDefinition.field773;
-         AbstractIndexCache var3 = SequenceDefinition.field774;
+         AbstractArchive var2 = SequenceDefinition.SequenceDefinition_animationsArchive;
+         AbstractArchive var3 = SequenceDefinition.SequenceDefinition_skeletonsArchive;
          boolean var4 = true;
-         int[] var5 = var2.method3(var0);
+         int[] var5 = var2.getGroupFileIds(var0);
 
          for (int var6 = 0; var6 < var5.length; ++var6) {
-            byte[] var7 = var2.getRecord(var0, var5[var6]);
+            byte[] var7 = var2.getFile(var0, var5[var6]);
             if (var7 == null) {
                var4 = false;
             } else {
                int var8 = (var7[0] & 255) << 8 | var7[1] & 255;
-               byte[] var9 = var3.getRecord(var8, 0);
+               byte[] var9 = var3.getFile(var8, 0);
                if (var9 == null) {
                   var4 = false;
                }
@@ -85,7 +86,7 @@ public class ItemContainer extends Node {
          }
 
          if (var11 != null) {
-            SequenceDefinition.field775.put(var11, (long)var0);
+            SequenceDefinition.SequenceDefinition_cachedFrames.put(var11, (long)var0);
          }
 
          return var11;

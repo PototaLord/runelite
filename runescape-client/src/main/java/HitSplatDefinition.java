@@ -11,17 +11,20 @@ public class HitSplatDefinition extends DualNode {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   static AbstractIndexCache field382;
+   @Export("HitSplatDefinition_archive")
+   static AbstractArchive HitSplatDefinition_archive;
    @ObfuscatedName("f")
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   static AbstractIndexCache field383;
+   @Export("HitSplatDefinition_spritesArchive")
+   static AbstractArchive HitSplatDefinition_spritesArchive;
    @ObfuscatedName("q")
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   static AbstractIndexCache field384;
+   @Export("HitSplatDefinition_fontsArchive")
+   static AbstractArchive HitSplatDefinition_fontsArchive;
    @ObfuscatedName("w")
    @ObfuscatedSignature(
       signature = "Ler;"
@@ -32,7 +35,8 @@ public class HitSplatDefinition extends DualNode {
    @ObfuscatedSignature(
       signature = "Ler;"
    )
-   static EvictingDualNodeHashTable field385;
+   @Export("HitSplatDefinition_cachedSprites")
+   static EvictingDualNodeHashTable HitSplatDefinition_cachedSprites;
    @ObfuscatedName("u")
    @ObfuscatedSignature(
       signature = "Ler;"
@@ -141,15 +145,15 @@ public class HitSplatDefinition extends DualNode {
       signature = "(Lgr;I)V",
       garbageValue = "1963348982"
    )
-   @Export("read")
-   void read(Buffer var1) {
+   @Export("decode")
+   void decode(Buffer var1) {
       while (true) {
          int var2 = var1.readUnsignedByte();
          if (var2 == 0) {
             return;
          }
 
-         this.readNext(var1, var2);
+         this.decodeNext(var1, var2);
       }
    }
 
@@ -158,8 +162,8 @@ public class HitSplatDefinition extends DualNode {
       signature = "(Lgr;II)V",
       garbageValue = "1789835753"
    )
-   @Export("readNext")
-   void readNext(Buffer var1, int var2) {
+   @Export("decodeNext")
+   void decodeNext(Buffer var1, int var2) {
       if (var2 == 1) {
          this.fontId = var1.method51();
       } else if (var2 == 2) {
@@ -173,19 +177,19 @@ public class HitSplatDefinition extends DualNode {
       } else if (var2 == 6) {
          this.field391 = var1.method51();
       } else if (var2 == 7) {
-         this.field392 = var1.method44();
+         this.field392 = var1.readShort();
       } else if (var2 == 8) {
          this.field395 = var1.readStringCp1252NullCircumfixed();
       } else if (var2 == 9) {
          this.field387 = var1.readUnsignedShort();
       } else if (var2 == 10) {
-         this.field393 = var1.method44();
+         this.field393 = var1.readShort();
       } else if (var2 == 11) {
          this.field394 = 0;
       } else if (var2 == 12) {
          this.field396 = var1.readUnsignedByte();
       } else if (var2 == 13) {
-         this.field397 = var1.method44();
+         this.field397 = var1.readShort();
       } else if (var2 == 14) {
          this.field394 = var1.readUnsignedShort();
       } else if (var2 == 17 || var2 == 18) {
@@ -231,7 +235,7 @@ public class HitSplatDefinition extends DualNode {
    public final HitSplatDefinition transform() {
       int var1 = -1;
       if (this.transformVarbit != -1) {
-         var1 = WorldMapSection2.getVarbit(this.transformVarbit);
+         var1 = WorldMapSection0.getVarbit(this.transformVarbit);
       } else if (this.transformVarp != -1) {
          var1 = Varps.Varps_main[this.transformVarp];
       }
@@ -274,13 +278,13 @@ public class HitSplatDefinition extends DualNode {
       if (this.field388 < 0) {
          return null;
       } else {
-         Sprite var1 = (Sprite)field385.get((long)this.field388);
+         Sprite var1 = (Sprite) HitSplatDefinition_cachedSprites.get((long)this.field388);
          if (var1 != null) {
             return var1;
          } else {
-            var1 = class322.readSprite(field383, this.field388, 0);
+            var1 = class322.readSprite(HitSplatDefinition_spritesArchive, this.field388, 0);
             if (var1 != null) {
-               field385.put(var1, (long)this.field388);
+               HitSplatDefinition_cachedSprites.put(var1, (long)this.field388);
             }
 
             return var1;
@@ -297,13 +301,13 @@ public class HitSplatDefinition extends DualNode {
       if (this.field389 < 0) {
          return null;
       } else {
-         Sprite var1 = (Sprite)field385.get((long)this.field389);
+         Sprite var1 = (Sprite) HitSplatDefinition_cachedSprites.get((long)this.field389);
          if (var1 != null) {
             return var1;
          } else {
-            var1 = class322.readSprite(field383, this.field389, 0);
+            var1 = class322.readSprite(HitSplatDefinition_spritesArchive, this.field389, 0);
             if (var1 != null) {
-               field385.put(var1, (long)this.field389);
+               HitSplatDefinition_cachedSprites.put(var1, (long)this.field389);
             }
 
             return var1;
@@ -320,13 +324,13 @@ public class HitSplatDefinition extends DualNode {
       if (this.field390 < 0) {
          return null;
       } else {
-         Sprite var1 = (Sprite)field385.get((long)this.field390);
+         Sprite var1 = (Sprite) HitSplatDefinition_cachedSprites.get((long)this.field390);
          if (var1 != null) {
             return var1;
          } else {
-            var1 = class322.readSprite(field383, this.field390, 0);
+            var1 = class322.readSprite(HitSplatDefinition_spritesArchive, this.field390, 0);
             if (var1 != null) {
-               field385.put(var1, (long)this.field390);
+               HitSplatDefinition_cachedSprites.put(var1, (long)this.field390);
             }
 
             return var1;
@@ -343,13 +347,13 @@ public class HitSplatDefinition extends DualNode {
       if (this.field391 < 0) {
          return null;
       } else {
-         Sprite var1 = (Sprite)field385.get((long)this.field391);
+         Sprite var1 = (Sprite) HitSplatDefinition_cachedSprites.get((long)this.field391);
          if (var1 != null) {
             return var1;
          } else {
-            var1 = class322.readSprite(field383, this.field391, 0);
+            var1 = class322.readSprite(HitSplatDefinition_spritesArchive, this.field391, 0);
             if (var1 != null) {
-               field385.put(var1, (long)this.field391);
+               HitSplatDefinition_cachedSprites.put(var1, (long)this.field391);
             }
 
             return var1;
@@ -371,7 +375,7 @@ public class HitSplatDefinition extends DualNode {
          if (var1 != null) {
             return var1;
          } else {
-            var1 = SpriteIds.method5823(field383, field384, this.fontId, 0);
+            var1 = GraphicsDefaults.loadFont(HitSplatDefinition_spritesArchive, HitSplatDefinition_fontsArchive, this.fontId, 0);
             if (var1 != null) {
                HitSplatDefinition_cachedFonts.put(var1, (long)this.fontId);
             }
@@ -388,7 +392,7 @@ public class HitSplatDefinition extends DualNode {
 
    static {
       HitSplatDefinition_cached = new EvictingDualNodeHashTable(64);
-      field385 = new EvictingDualNodeHashTable(64);
+      HitSplatDefinition_cachedSprites = new EvictingDualNodeHashTable(64);
       HitSplatDefinition_cachedFonts = new EvictingDualNodeHashTable(20);
    }
 }

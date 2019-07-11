@@ -30,7 +30,7 @@ import net.runelite.api.Nameable;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.NameableNameChanged;
-import net.runelite.api.events.RemovedFriend;
+import net.runelite.api.events.FriendRemoved;
 import net.runelite.api.events.WidgetMenuOptionClicked;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
@@ -63,13 +63,13 @@ public class FriendTaggingPlugin extends Plugin
 	private static final String KEY_PREFIX = "tag_";
 	private static final String ADD_TAG = "Add Tag";
 	private static final String DELETE_TAG = "Delete Tag";
-	private WidgetMenuOption friendsTabMenuOption = new WidgetMenuOption("Copy to", "clipboard",
+	private final WidgetMenuOption friendsTabMenuOption = new WidgetMenuOption("Copy to", "clipboard",
 		WidgetInfo.FIXED_VIEWPORT_FRIENDS_TAB);
-	private WidgetMenuOption ignoreTabMenuOption = new WidgetMenuOption("Copy to", "clipboard",
+	private final WidgetMenuOption ignoreTabMenuOption = new WidgetMenuOption("Copy to", "clipboard",
 		WidgetInfo.FIXED_VIEWPORT_IGNORES_TAB);
-	private WidgetMenuOption friendTabResizableOption = new WidgetMenuOption("Copy to", "clipboard",
+	private final WidgetMenuOption friendTabResizableOption = new WidgetMenuOption("Copy to", "clipboard",
 		WidgetInfo.FIXED_VIEWPORT_FRIENDS_TAB);
-	private WidgetMenuOption ignoreTabResizableOption = new WidgetMenuOption("Copy to", "clipboard",
+	private final WidgetMenuOption ignoreTabResizableOption = new WidgetMenuOption("Copy to", "clipboard",
 		WidgetInfo.FIXED_VIEWPORT_IGNORES_TAB);
 
 	@Inject
@@ -128,7 +128,7 @@ public class FriendTaggingPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onRemovedFriend(RemovedFriend event)
+	public void onFriendRemoved(FriendRemoved event)
 	{
 		final String displayName = event.getName().trim().toLowerCase();
 		deleteTag(displayName);

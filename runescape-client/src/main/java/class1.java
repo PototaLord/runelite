@@ -9,7 +9,8 @@ final class class1 implements class0 {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   public static AbstractIndexCache field1105;
+   @Export("musicPatchesArchive")
+   public static AbstractArchive musicPatchesArchive;
 
    @ObfuscatedName("m")
    @ObfuscatedSignature(
@@ -84,7 +85,7 @@ final class class1 implements class0 {
          var3 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
          var4 = Huffman.getWidget(var3);
       } else {
-         var4 = var2 ? WorldMapIcon1.field1030 : class12.field1111;
+         var4 = var2 ? WorldMapIcon1.field1030 : GrandExchangeOfferAgeComparator.field1111;
       }
 
       if (var0 == ScriptOpcodes.CC_SETPOSITION) {
@@ -93,10 +94,10 @@ final class class1 implements class0 {
          var4.rawY = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 1];
          var4.xAlignment = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 2];
          var4.yAlignment = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 3];
-         class22.method295(var4);
+         WorldMapRectangle.method295(var4);
          TextureProvider.client.alignWidget(var4);
          if (var3 != -1 && var4.type == 0) {
-            class39.revalidateWidgetScroll(Widget.widgets[var3 >> 16], var4, false);
+            class39.revalidateWidgetScroll(Widget.interfaceComponents[var3 >> 16], var4, false);
          }
 
          return 1;
@@ -106,10 +107,10 @@ final class class1 implements class0 {
          var4.rawHeight = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 1];
          var4.widthAlignment = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 2];
          var4.heightAlignment = Interpreter.Interpreter_intStack[RouteStrategy.Interpreter_intStackSize + 3];
-         class22.method295(var4);
+         WorldMapRectangle.method295(var4);
          TextureProvider.client.alignWidget(var4);
          if (var3 != -1 && var4.type == 0) {
-            class39.revalidateWidgetScroll(Widget.widgets[var3 >> 16], var4, false);
+            class39.revalidateWidgetScroll(Widget.interfaceComponents[var3 >> 16], var4, false);
          }
 
          return 1;
@@ -117,14 +118,14 @@ final class class1 implements class0 {
          boolean var5 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize] == 1;
          if (var5 != var4.isHidden) {
             var4.isHidden = var5;
-            class22.method295(var4);
+            WorldMapRectangle.method295(var4);
          }
 
          return 1;
       } else if (var0 == ScriptOpcodes.CC_SETNOCLICKTHROUGH) {
          var4.noClickThrough = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize] == 1;
          return 1;
-      } else if (var0 == 1006) {
+      } else if (var0 == ScriptOpcodes.CC_SETNOSCROLLTHROUGH) {
          var4.noScrollThrough = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize] == 1;
          return 1;
       } else {
@@ -227,19 +228,19 @@ final class class1 implements class0 {
             } else if (var0 == ScriptOpcodes.OC_FIND) {
                String var7 = Interpreter.Interpreter_stringStack[--Interpreter.Interpreter_stringStackSize];
                var4 = Interpreter.Interpreter_intStack[--RouteStrategy.Interpreter_intStackSize];
-               class50.method900(var7, var4 == 1);
-               Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = WorldMapSection0.field1055;
+               class50.findItemDefinitions(var7, var4 == 1);
+               Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = WorldMapSection3.foundItemIdCount;
                return 1;
             } else if (var0 != ScriptOpcodes.OC_FINDNEXT) {
                if (var0 == ScriptOpcodes.OC_FINDRESET) {
-                  WorldMapDecorationType.field1139 = 0;
+                  WorldMapDecorationType.foundItemIndex = 0;
                   return 1;
                } else {
                   return 2;
                }
             } else {
-               if (AttackOption.field30 != null && WorldMapDecorationType.field1139 < WorldMapSection0.field1055) {
-                  Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = AttackOption.field30[++WorldMapDecorationType.field1139 - 1] & '\uffff';
+               if (AttackOption.foundItemIds != null && WorldMapDecorationType.foundItemIndex < WorldMapSection3.foundItemIdCount) {
+                  Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = AttackOption.foundItemIds[++WorldMapDecorationType.foundItemIndex - 1] & '\uffff';
                } else {
                   Interpreter.Interpreter_intStack[++RouteStrategy.Interpreter_intStackSize - 1] = -1;
                }
@@ -271,8 +272,8 @@ final class class1 implements class0 {
       garbageValue = "1809366429"
    )
    @Export("getWidgetClickMask")
-   static int getWidgetClickMask(Widget var0) {
-      IntegerNode var1 = (IntegerNode)Client.widgetClickMasks.get(((long)var0.id << 32) + (long)var0.childIndex);
-      return var1 != null ? var1.integer : var0.clickMask;
+   static int getWidgetClickMask(Widget component) {
+      IntegerNode var1 = (IntegerNode)Client.widgetClickMasks.get(((long)component.id << 32) + (long)component.childIndex);
+      return var1 != null ? var1.integer : component.clickMask;
    }
 }

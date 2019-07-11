@@ -14,13 +14,14 @@ public class ObjectDefinition extends DualNode {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   @Export("ObjectDefinition_indexCache")
-   static AbstractIndexCache ObjectDefinition_indexCache;
+   @Export("ObjectDefinition_archive")
+   static AbstractArchive ObjectDefinition_archive;
    @ObfuscatedName("q")
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   static AbstractIndexCache field640;
+   @Export("ObjectDefinition_modelsArchive")
+   static AbstractArchive ObjectDefinition_modelsArchive;
    @ObfuscatedName("w")
    @ObfuscatedSignature(
       signature = "Ler;"
@@ -31,12 +32,14 @@ public class ObjectDefinition extends DualNode {
    @ObfuscatedSignature(
       signature = "Ler;"
    )
-   public static EvictingDualNodeHashTable field641;
+   @Export("ObjectDefinition_cachedModelData")
+   public static EvictingDualNodeHashTable ObjectDefinition_cachedModelData;
    @ObfuscatedName("u")
    @ObfuscatedSignature(
       signature = "Ler;"
    )
-   static EvictingDualNodeHashTable field642;
+   @Export("ObjectDefinition_cachedEntities")
+   static EvictingDualNodeHashTable ObjectDefinition_cachedEntities;
    @ObfuscatedName("g")
    @ObfuscatedSignature(
       signature = "Ler;"
@@ -218,8 +221,8 @@ public class ObjectDefinition extends DualNode {
    @ObfuscatedGetter(
       intValue = -2119965579
    )
-   @Export("transformConfigId")
-   int transformConfigId;
+   @Export("transformVarp")
+   int transformVarp;
    @ObfuscatedName("az")
    @ObfuscatedGetter(
       intValue = 374616127
@@ -282,7 +285,7 @@ public class ObjectDefinition extends DualNode {
       this.isSolid = false;
       this.int3 = -1;
       this.transformVarbit = -1;
-      this.transformConfigId = -1;
+      this.transformVarp = -1;
       this.ambientSoundId = -1;
       this.int4 = 0;
       this.int5 = 0;
@@ -294,8 +297,8 @@ public class ObjectDefinition extends DualNode {
       signature = "(I)V",
       garbageValue = "-245255765"
    )
-   @Export("init")
-   void init() {
+   @Export("postDecode")
+   void postDecode() {
       if (this.int1 == -1) {
          this.int1 = 0;
          if (this.field644 != null && (this.field645 == null || this.field645[0] == 10)) {
@@ -320,15 +323,15 @@ public class ObjectDefinition extends DualNode {
       signature = "(Lgr;I)V",
       garbageValue = "1210669830"
    )
-   @Export("read")
-   void read(Buffer var1) {
+   @Export("decode")
+   void decode(Buffer var1) {
       while (true) {
          int var2 = var1.readUnsignedByte();
          if (var2 == 0) {
             return;
          }
 
-         this.readNext(var1, var2);
+         this.decodeNext(var1, var2);
       }
    }
 
@@ -337,8 +340,8 @@ public class ObjectDefinition extends DualNode {
       signature = "(Lgr;II)V",
       garbageValue = "-2044409717"
    )
-   @Export("readNext")
-   void readNext(Buffer var1, int var2) {
+   @Export("decodeNext")
+   void decodeNext(Buffer var1, int var2) {
       int var3;
       int var4;
       if (var2 == 1) {
@@ -440,11 +443,11 @@ public class ObjectDefinition extends DualNode {
       } else if (var2 == 69) {
          var1.readUnsignedByte();
       } else if (var2 == 70) {
-         this.offsetX = var1.method44();
+         this.offsetX = var1.readShort();
       } else if (var2 == 71) {
-         this.offsetHeight = var1.method44();
+         this.offsetHeight = var1.readShort();
       } else if (var2 == 72) {
-         this.offsetY = var1.method44();
+         this.offsetY = var1.readShort();
       } else if (var2 == 73) {
          this.boolean2 = true;
       } else if (var2 == 74) {
@@ -470,7 +473,7 @@ public class ObjectDefinition extends DualNode {
          } else if (var2 == 82) {
             this.mapIconId = var1.readUnsignedShort();
          } else if (var2 == 249) {
-            this.params = AbstractIndexCache.readStringIntParameters(var1, this.params);
+            this.params = AbstractArchive.readStringIntParameters(var1, this.params);
          }
       } else {
          this.transformVarbit = var1.readUnsignedShort();
@@ -478,9 +481,9 @@ public class ObjectDefinition extends DualNode {
             this.transformVarbit = -1;
          }
 
-         this.transformConfigId = var1.readUnsignedShort();
-         if (this.transformConfigId == 65535) {
-            this.transformConfigId = -1;
+         this.transformVarp = var1.readUnsignedShort();
+         if (this.transformVarp == 65535) {
+            this.transformVarp = -1;
          }
 
          var3 = -1;
@@ -515,7 +518,7 @@ public class ObjectDefinition extends DualNode {
       if (this.field645 != null) {
          for (int var4 = 0; var4 < this.field645.length; ++var4) {
             if (this.field645[var4] == var1) {
-               return field640.tryLoadRecord(this.field644[var4] & 65535, 0);
+               return ObjectDefinition_modelsArchive.tryLoadFile(this.field644[var4] & 65535, 0);
             }
          }
 
@@ -528,7 +531,7 @@ public class ObjectDefinition extends DualNode {
          boolean var2 = true;
 
          for (int var3 = 0; var3 < this.field644.length; ++var3) {
-            var2 &= field640.tryLoadRecord(this.field644[var3] & 65535, 0);
+            var2 &= ObjectDefinition_modelsArchive.tryLoadFile(this.field644[var3] & 65535, 0);
          }
 
          return var2;
@@ -547,7 +550,7 @@ public class ObjectDefinition extends DualNode {
          boolean var1 = true;
 
          for (int var2 = 0; var2 < this.field644.length; ++var2) {
-            var1 &= field640.tryLoadRecord(this.field644[var2] & 65535, 0);
+            var1 &= ObjectDefinition_modelsArchive.tryLoadFile(this.field644[var2] & 65535, 0);
          }
 
          return var1;
@@ -567,7 +570,7 @@ public class ObjectDefinition extends DualNode {
          var7 = (long)(var2 + (var1 << 3) + (this.id << 10));
       }
 
-      Object var9 = (Entity)field642.get(var7);
+      Object var9 = (Entity) ObjectDefinition_cachedEntities.get(var7);
       if (var9 == null) {
          ModelData var10 = this.getModelData(var1, var2);
          if (var10 == null) {
@@ -583,7 +586,7 @@ public class ObjectDefinition extends DualNode {
             var9 = var10;
          }
 
-         field642.put((DualNode)var9, var7);
+         ObjectDefinition_cachedEntities.put((DualNode)var9, var7);
       }
 
       if (this.nonFlatShading) {
@@ -662,7 +665,7 @@ public class ObjectDefinition extends DualNode {
          return var11;
       } else {
          if (var7 != null) {
-            var11 = var7.animateObject(var11, var8, var2);
+            var11 = var7.transformObjectModel(var11, var8, var2);
          } else {
             var11 = var11.toSharedSequenceModel(true);
          }
@@ -687,6 +690,7 @@ public class ObjectDefinition extends DualNode {
       int var5;
       int var6;
       int var7;
+      boolean var8;
       if (this.field645 == null) {
          if (var1 != 10) {
             return null;
@@ -709,9 +713,9 @@ public class ObjectDefinition extends DualNode {
                var6 += 65536;
             }
 
-            var3 = (ModelData)field641.get((long)var6);
+            var3 = (ModelData) ObjectDefinition_cachedModelData.get((long)var6);
             if (var3 == null) {
-               var3 = ModelData.method2788(field640, var6 & 65535, 0);
+               var3 = ModelData.method2788(ObjectDefinition_modelsArchive, var6 & 65535, 0);
                if (var3 == null) {
                   return null;
                }
@@ -720,7 +724,7 @@ public class ObjectDefinition extends DualNode {
                   var3.method214();
                }
 
-               field641.put(var3, (long)var6);
+               ObjectDefinition_cachedModelData.put(var3, (long)var6);
             }
 
             if (var5 > 1) {
@@ -746,14 +750,14 @@ public class ObjectDefinition extends DualNode {
          }
 
          var5 = this.field644[var7];
-         boolean var8 = this.isRotated ^ var2 > 3;
+         var8 = this.isRotated ^ var2 > 3;
          if (var8) {
             var5 += 65536;
          }
 
-         var3 = (ModelData)field641.get((long)var5);
+         var3 = (ModelData) ObjectDefinition_cachedModelData.get((long)var5);
          if (var3 == null) {
-            var3 = ModelData.method2788(field640, var5 & 65535, 0);
+            var3 = ModelData.method2788(ObjectDefinition_modelsArchive, var5 & 65535, 0);
             if (var3 == null) {
                return null;
             }
@@ -762,7 +766,7 @@ public class ObjectDefinition extends DualNode {
                var3.method214();
             }
 
-            field641.put(var3, (long)var5);
+            ObjectDefinition_cachedModelData.put(var3, (long)var5);
          }
       }
 
@@ -772,14 +776,13 @@ public class ObjectDefinition extends DualNode {
          var4 = true;
       }
 
-      boolean var10;
       if (this.offsetX == 0 && this.offsetHeight == 0 && this.offsetY == 0) {
-         var10 = false;
+         var8 = false;
       } else {
-         var10 = true;
+         var8 = true;
       }
 
-      ModelData var9 = new ModelData(var3, var2 == 0 && !var4 && !var10, this.recolorFrom == null, null == this.retextureFrom, true);
+      ModelData var9 = new ModelData(var3, var2 == 0 && !var4 && !var8, this.recolorFrom == null, null == this.retextureFrom, true);
       if (var1 == 4 && var2 > 3) {
          var9.method212(256);
          var9.method213(45, 0, -45);
@@ -810,7 +813,7 @@ public class ObjectDefinition extends DualNode {
          var9.method215(this.modelSizeX, this.modelHeight, this.modelSizeY);
       }
 
-      if (var10) {
+      if (var8) {
          var9.method213(this.offsetX, this.offsetHeight, this.offsetY);
       }
 
@@ -826,9 +829,9 @@ public class ObjectDefinition extends DualNode {
    public final ObjectDefinition transform() {
       int var1 = -1;
       if (this.transformVarbit != -1) {
-         var1 = WorldMapSection2.getVarbit(this.transformVarbit);
-      } else if (this.transformConfigId != -1) {
-         var1 = Varps.Varps_main[this.transformConfigId];
+         var1 = WorldMapSection0.getVarbit(this.transformVarbit);
+      } else if (this.transformVarp != -1) {
+         var1 = Varps.Varps_main[this.transformVarp];
       }
 
       int var2;
@@ -907,14 +910,14 @@ public class ObjectDefinition extends DualNode {
       if (var1 != null) {
          return var1;
       } else {
-         byte[] var2 = NPCDefinition.NpcDefinition_indexCache.takeRecord(9, var0);
+         byte[] var2 = NPCDefinition.NpcDefinition_archive.takeFile(9, var0);
          var1 = new NPCDefinition();
          var1.id = var0;
          if (var2 != null) {
-            var1.read(new Buffer(var2));
+            var1.decode(new Buffer(var2));
          }
 
-         var1.init();
+         var1.postDecode();
          NPCDefinition.NpcDefinition_cached.put(var1, (long)var0);
          return var1;
       }
@@ -926,14 +929,14 @@ public class ObjectDefinition extends DualNode {
       garbageValue = "0"
    )
    public static void method5041() {
-      ItemDefinition.Sprite_cached.clear();
+      ItemDefinition.ItemDefinition_cachedSprites.clear();
    }
 
    static {
       ObjectDefinition_isLowDetail = false;
       ObjectDefinition_cached = new EvictingDualNodeHashTable(4096);
-      field641 = new EvictingDualNodeHashTable(500);
-      field642 = new EvictingDualNodeHashTable(30);
+      ObjectDefinition_cachedModelData = new EvictingDualNodeHashTable(500);
+      ObjectDefinition_cachedEntities = new EvictingDualNodeHashTable(30);
       ObjectDefinition_cachedModels = new EvictingDualNodeHashTable(30);
       field643 = new ModelData[4];
    }

@@ -97,12 +97,14 @@ public class ChatFilterPlugin extends Plugin
 	{
 		updateConfig();
 		updateFilteredPatterns();
+		client.refreshChat();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
 		filteredPatterns.clear();
+		client.refreshChat();
 	}
 
 	@Subscribe
@@ -131,6 +133,13 @@ public class ChatFilterPlugin extends Plugin
 			case FRIENDSCHAT:
 			case GAMEMESSAGE:
 				break;
+			case LOGINLOGOUTNOTIFICATION:
+				if (config.filterLogin())
+				{
+					// Block the message
+					intStack[intStackSize - 3] = 0;
+				}
+				return;
 			default:
 				return;
 		}
@@ -255,6 +264,9 @@ public class ChatFilterPlugin extends Plugin
 
 		updateConfig();
 		updateFilteredPatterns();
+
+		//Refresh chat after config change to reflect current rules
+		client.refreshChat();
 	}
 
 	private void updateConfig()

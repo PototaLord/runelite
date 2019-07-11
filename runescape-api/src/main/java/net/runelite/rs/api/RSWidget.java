@@ -312,7 +312,7 @@ public interface RSWidget extends Widget
 	@Override
 	void setHasListener(boolean hasListener);
 
-	@Import("onKeyListener")
+	@Import("onKey")
 	@Override
 	Object[] getOnKeyListener();
 
@@ -320,11 +320,11 @@ public interface RSWidget extends Widget
 	@Override
 	Object[] getOnLoadListener();
 
-	@Import("onDialogAbortListener")
+	@Import("onDialogAbort")
 	@Override
 	void setOnDialogAbortListener(Object... args);
 
-	@Import("onKeyListener")
+	@Import("onKey")
 	@Override
 	void setOnKeyListener(Object... args);
 
@@ -475,4 +475,10 @@ public interface RSWidget extends Widget
 	@Import("noScrollThrough")
 	@Override
 	void setNoScrollThrough(boolean noScrollThrough);
+
+	@Import("modelFrame")
+	int getModelFrame();
+
+	@Import("modelFrameCycle")
+	int getModelFrameCycle();
 }

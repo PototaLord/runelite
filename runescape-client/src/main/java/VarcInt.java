@@ -11,13 +11,14 @@ public class VarcInt extends DualNode {
    @ObfuscatedSignature(
       signature = "Lir;"
    )
-   static AbstractIndexCache field942;
+   @Export("VarcInt_archive")
+   static AbstractArchive VarcInt_archive;
    @ObfuscatedName("f")
    @ObfuscatedSignature(
       signature = "Ler;"
    )
-   @Export("cachedVarcInts")
-   static EvictingDualNodeHashTable cachedVarcInts;
+   @Export("VarcInt_cached")
+   static EvictingDualNodeHashTable VarcInt_cached;
    @ObfuscatedName("q")
    @Export("persist")
    public boolean persist;
@@ -60,8 +61,8 @@ public class VarcInt extends DualNode {
       garbageValue = "1680587190"
    )
    @Export("loadClassFromDescriptor")
-   static Class loadClassFromDescriptor(String var0) throws ClassNotFoundException {
-      return var0.equals("B") ? Byte.TYPE : (var0.equals("I") ? Integer.TYPE : (var0.equals("S") ? Short.TYPE : (var0.equals("J") ? Long.TYPE : (var0.equals("Z") ? Boolean.TYPE : (var0.equals("F") ? Float.TYPE : (var0.equals("D") ? Double.TYPE : (var0.equals("C") ? Character.TYPE : (var0.equals("void") ? Void.TYPE : Reflection.findClass(var0)))))))));
+   static Class loadClassFromDescriptor(String descriptor) throws ClassNotFoundException {
+      return descriptor.equals("B") ? Byte.TYPE : (descriptor.equals("I") ? Integer.TYPE : (descriptor.equals("S") ? Short.TYPE : (descriptor.equals("J") ? Long.TYPE : (descriptor.equals("Z") ? Boolean.TYPE : (descriptor.equals("F") ? Float.TYPE : (descriptor.equals("D") ? Double.TYPE : (descriptor.equals("C") ? Character.TYPE : (descriptor.equals("void") ? Void.TYPE : Reflection.findClass(descriptor)))))))));
    }
 
    @ObfuscatedName("a")
@@ -75,6 +76,6 @@ public class VarcInt extends DualNode {
    }
 
    static {
-      cachedVarcInts = new EvictingDualNodeHashTable(64);
+      VarcInt_cached = new EvictingDualNodeHashTable(64);
    }
 }

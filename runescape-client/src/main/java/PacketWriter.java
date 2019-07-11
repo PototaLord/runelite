@@ -18,8 +18,8 @@ public class PacketWriter {
    @ObfuscatedSignature(
       signature = "Lfu;"
    )
-   @Export("socket0")
-   AbstractSocket socket0;
+   @Export("socket")
+   AbstractSocket socket;
    @ObfuscatedName("f")
    @ObfuscatedSignature(
       signature = "Lja;"
@@ -117,18 +117,18 @@ public class PacketWriter {
       garbageValue = "-1839929685"
    )
    final void method240() throws IOException {
-      if (this.socket0 != null && this.field672 > 0) {
+      if (this.socket != null && this.field672 > 0) {
          this.buffer.index = 0;
 
          while (true) {
             PacketBufferNode var1 = (PacketBufferNode)this.packetBufferNodes.last();
             if (var1 == null || var1.field671 > this.buffer.array.length - this.buffer.index) {
-               this.socket0.write(this.buffer.array, 0, this.buffer.index);
+               this.socket.write(this.buffer.array, 0, this.buffer.index);
                this.field675 = 0;
                break;
             }
 
-            this.buffer.method38(var1.packetBuffer.array, 0, var1.field671);
+            this.buffer.writeBytes(var1.packetBuffer.array, 0, var1.field671);
             this.field672 -= var1.field671;
             var1.remove();
             var1.packetBuffer.method36();
@@ -156,8 +156,8 @@ public class PacketWriter {
       garbageValue = "111"
    )
    @Export("setSocket")
-   void setSocket(AbstractSocket var1) {
-      this.socket0 = var1;
+   void setSocket(AbstractSocket socket) {
+      this.socket = socket;
    }
 
    @ObfuscatedName("o")
@@ -167,9 +167,9 @@ public class PacketWriter {
    )
    @Export("close")
    void close() {
-      if (this.socket0 != null) {
-         this.socket0.close();
-         this.socket0 = null;
+      if (this.socket != null) {
+         this.socket.close();
+         this.socket = null;
       }
 
    }
@@ -181,7 +181,7 @@ public class PacketWriter {
    )
    @Export("removeSocket")
    void removeSocket() {
-      this.socket0 = null;
+      this.socket = null;
    }
 
    @ObfuscatedName("g")
@@ -191,6 +191,6 @@ public class PacketWriter {
    )
    @Export("getSocket")
    AbstractSocket getSocket() {
-      return this.socket0;
+      return this.socket;
    }
 }

@@ -1,6 +1,7 @@
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
+import net.runelite.mapping.Export;
 import net.runelite.mapping.ObfuscatedGetter;
 import net.runelite.mapping.ObfuscatedName;
 import net.runelite.mapping.ObfuscatedSignature;
@@ -15,7 +16,8 @@ public class class83 {
    @ObfuscatedGetter(
       intValue = 533653621
    )
-   public static int field1167;
+   @Export("ItemDefinition_fileCount")
+   public static int ItemDefinition_fileCount;
 
    @ObfuscatedName("m")
    @ObfuscatedSignature(
@@ -50,7 +52,7 @@ public class class83 {
       signature = "(Lir;II)Llq;",
       garbageValue = "1413048059"
    )
-   public static IndexedSprite method2028(AbstractIndexCache var0, int var1) {
+   public static IndexedSprite method2028(AbstractArchive var0, int var1) {
       return !RouteStrategy.loadSpriteFlat(var0, var1) ? null : ServerPacket.createIndexedSprite();
    }
 

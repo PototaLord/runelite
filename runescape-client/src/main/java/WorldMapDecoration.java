@@ -11,8 +11,8 @@ public class WorldMapDecoration {
    @ObfuscatedSignature(
       signature = "Lit;"
    )
-   @Export("indexCache4")
-   static IndexCache indexCache4;
+   @Export("archive4")
+   static Archive archive4;
    @ObfuscatedName("kw")
    @ObfuscatedGetter(
       intValue = -12041645
@@ -96,7 +96,7 @@ public class WorldMapDecoration {
          ScriptEvent var5 = new ScriptEvent();
          var5.widget = var4;
          var5.args0 = var4.onTargetEnter;
-         AbstractIndexCache.runScript(var5);
+         AbstractArchive.runScript(var5);
       }
 
       Client.field157 = var3;
@@ -104,6 +104,6 @@ public class WorldMapDecoration {
       ServerBuild.field788 = var0;
       Client.field220 = var1;
       FloorDecoration.selectedSpellFlags = var2;
-      class22.method295(var4);
+      WorldMapRectangle.method295(var4);
    }
 }

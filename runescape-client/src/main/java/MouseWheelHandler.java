@@ -27,8 +27,8 @@ public final class MouseWheelHandler implements MouseWheel, MouseWheelListener {
       garbageValue = "-28"
    )
    @Export("addTo")
-   void addTo(Component var1) {
-      var1.addMouseWheelListener(this);
+   void addTo(Component component) {
+      component.addMouseWheelListener(this);
    }
 
    @ObfuscatedName("f")
@@ -37,8 +37,8 @@ public final class MouseWheelHandler implements MouseWheel, MouseWheelListener {
       garbageValue = "-544062729"
    )
    @Export("removeFrom")
-   void removeFrom(Component var1) {
-      var1.removeMouseWheelListener(this);
+   void removeFrom(Component component) {
+      component.removeMouseWheelListener(this);
    }
 
    @ObfuscatedName("q")
@@ -53,8 +53,6 @@ public final class MouseWheelHandler implements MouseWheel, MouseWheelListener {
       return var1;
    }
 
-   @Export("mouseWheelMoved")
-   @ObfuscatedName("mouseWheelMoved")
    public synchronized void mouseWheelMoved(MouseWheelEvent var1) {
       this.rotation += var1.getWheelRotation();
    }
