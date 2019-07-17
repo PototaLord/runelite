@@ -273,6 +273,8 @@ public class ScreenshotPlugin extends Plugin
 				.build();
 
 		clientToolbar.addNavigation(titleBarButton);
+
+		spriteManager.getSpriteAsync(SpriteID.CHATBOX_REPORT_BUTTON, 0, s -> reportButton = s);
 	}
 
 	@Override
@@ -774,6 +776,14 @@ public class ScreenshotPlugin extends Plugin
 		try
 		{
 			File screenshotFile = new File(playerFolder, fileName + ".png");
+
+			// To make sure that screenshots don't get overwritten, check if file exists,
+			// and if it does create file with same name and suffix.
+			int i = 1;
+			while (screenshotFile.exists())
+			{
+				screenshotFile = new File(playerFolder, fileName + String.format("(%d)", i++) + ".png");
+			}
 
 			ImageIO.write(screenshot, "PNG", screenshotFile);
 
