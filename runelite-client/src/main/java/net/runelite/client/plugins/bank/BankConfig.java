@@ -99,13 +99,13 @@ public interface BankConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "rightClickSearch",
-			name = "Disable left click Search",
-			description = "Configures whether the bank looting bag button will bank your looting bag contents on left click",
-			position = 7
+		keyName = "seedVaultValue",
+		name = "Show seed vault value",
+		description = "Adds the total value of all seeds inside the seed vault to the title",
+		position = 7
 	)
-	default boolean rightClickSearch()
+	default boolean seedVaultValue()
 	{
-		return false;
+		return true;
 	}
 }

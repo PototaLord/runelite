@@ -101,19 +101,19 @@ public abstract class ScriptVMMixin implements RSClient
 			ScriptCallbackEvent event = new ScriptCallbackEvent();
 			event.setScript(currentScript);
 			event.setEventName(stringOp);
-			client.getCallbacks().post(event);
+			client.getCallbacks().post(ScriptCallbackEvent.class, event);
 			return true;
 		}
 		return false;
 	}
 
-	@Copy("runScript0")
+	@Copy("runScript")
 	static void rs$runScript(RSScriptEvent event, int maxExecutionTime)
 	{
 		throw new RuntimeException();
 	}
 
-	@Replace("runScript0")
+	@Replace("runScript")
 	static void rl$runScript(RSScriptEvent event, int maxExecutionTime)
 	{
 		Object[] arguments = event.getArguments();

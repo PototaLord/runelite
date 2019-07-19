@@ -26,7 +26,7 @@ package net.runelite.client.plugins.examine;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import java.io.IOException;
+import io.reactivex.schedulers.Schedulers;
 import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -46,18 +46,18 @@ import net.runelite.api.widgets.WidgetInfo;
 import static net.runelite.api.widgets.WidgetInfo.TO_CHILD;
 import static net.runelite.api.widgets.WidgetInfo.TO_GROUP;
 import net.runelite.api.widgets.WidgetItem;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.StackFormatter;
 import net.runelite.http.api.examine.ExamineClient;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
-import net.runelite.http.api.osbuddy.OSBGrandExchangeResult;
 
 /**
  * Submits examine info to the api
@@ -88,6 +88,9 @@ public class ExaminePlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private ClientThread clientThread;
+
+	@Inject
 	private ItemManager itemManager;
 
 	@Inject
@@ -96,15 +99,34 @@ public class ExaminePlugin extends Plugin
 	@Inject
 	private ScheduledExecutorService executor;
 
+	@Inject
+	private EventBus eventBus;
 
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged event)
+	@Override
+	protected void startUp() throws Exception
+	{
+		addSubscriptions();
+	}
+
+	@Override
+	protected void shutDown() throws Exception
+	{
+		eventBus.unregister(this);
+	}
+
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(GameStateChanged.class, this, this::onGameStateChanged);
+		eventBus.subscribe(MenuOptionClicked.class, this, this::onMenuOptionClicked);
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+	}
+
+	private void onGameStateChanged(GameStateChanged event)
 	{
 		pending.clear();
 	}
 
-	@Subscribe
-	public void onMenuOptionClicked(MenuOptionClicked event)
+	void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if (!event.getOption().equals("Examine"))
 		{
@@ -161,8 +183,7 @@ public class ExaminePlugin extends Plugin
 		pending.push(pendingExamine);
 	}
 
-	@Subscribe
-	public void onChatMessage(ChatMessage event)
+	void onChatMessage(ChatMessage event)
 	{
 		ExamineType type;
 		switch (event.getType())
@@ -347,40 +368,41 @@ public class ExaminePlugin extends Plugin
 
 			if (gePrice > 0)
 			{
-				OSBGrandExchangeResult osbresult = new OSBGrandExchangeResult();
-				try
-				{
-					osbresult = CLIENT.lookupItem(id);
-				}
-				catch (IOException e)
-				{
-					log.error(e.toString());
-				}
-				message
-					.append(ChatColorType.NORMAL)
-					.append(" GE  ")
-					.append(ChatColorType.HIGHLIGHT)
-					.append(StackFormatter.formatNumber(gePrice * quantity));
+				int finalQuantity = quantity;
+				CLIENT.lookupItem(id)
+					.subscribeOn(Schedulers.single())
+					.subscribe(
+						(osbresult) ->
+							clientThread.invoke(() ->
+							{
+								message
+									.append(ChatColorType.NORMAL)
+									.append(" GE  ")
+									.append(ChatColorType.HIGHLIGHT)
+									.append(StackFormatter.formatNumber(gePrice * finalQuantity));
 
-				if (osbresult != null)
-				{
-					message
-						.append(ChatColorType.NORMAL)
-						.append(" OSB  ")
-						.append(ChatColorType.HIGHLIGHT)
-						.append(StackFormatter.formatNumber(osbresult.getOverall_average() * quantity));
-				}
+								if (osbresult != null)
+								{
+									message
+										.append(ChatColorType.NORMAL)
+										.append(" OSB  ")
+										.append(ChatColorType.HIGHLIGHT)
+										.append(StackFormatter.formatNumber(osbresult.getOverall_average() * finalQuantity));
+								}
 
-				if (quantity > 1)
-				{
-					message
-						.append(ChatColorType.NORMAL)
-						.append(" (")
-						.append(ChatColorType.HIGHLIGHT)
-						.append(StackFormatter.formatNumber(gePrice))
-						.append(ChatColorType.NORMAL)
-						.append("ea)");
-				}
+								if (finalQuantity > 1)
+								{
+									message
+										.append(ChatColorType.NORMAL)
+										.append(" (")
+										.append(ChatColorType.HIGHLIGHT)
+										.append(StackFormatter.formatNumber(gePrice))
+										.append(ChatColorType.NORMAL)
+										.append("ea)");
+								}
+							}),
+						(e) -> log.error(e.toString())
+					);
 			}
 
 			if (alchPrice > 0)

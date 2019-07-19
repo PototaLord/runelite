@@ -25,15 +25,15 @@
  */
 package net.runelite.client.plugins.chatcommands;
 
-import javax.inject.Singleton;
-import net.runelite.api.vars.AccountType;
 import com.google.inject.Provides;
+import io.reactivex.schedulers.Schedulers;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
@@ -48,15 +48,17 @@ import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.vars.AccountType;
 import net.runelite.api.widgets.Widget;
 import static net.runelite.api.widgets.WidgetID.KILL_LOGS_GROUP_ID;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatCommandManager;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.events.ChatInput;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.input.KeyManager;
@@ -74,7 +76,6 @@ import net.runelite.http.api.hiscore.SingleHiscoreSkillResult;
 import net.runelite.http.api.hiscore.Skill;
 import net.runelite.http.api.item.ItemPrice;
 import net.runelite.http.api.osbuddy.OSBGrandExchangeClient;
-import net.runelite.http.api.osbuddy.OSBGrandExchangeResult;
 import org.apache.commons.text.WordUtils;
 
 @PluginDescriptor(
@@ -117,6 +118,9 @@ public class ChatCommandsPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private ClientThread clientThread;
+
+	@Inject
 	private ChatCommandsConfig config;
 
 	@Inject
@@ -140,9 +144,14 @@ public class ChatCommandsPlugin extends Plugin
 	@Inject
 	private ChatKeyboardListener chatKeyboardListener;
 
+	@Inject
+	private EventBus eventBus;
+
 	@Override
 	public void startUp()
 	{
+		addSubscriptions();
+
 		keyManager.registerKeyListener(chatKeyboardListener);
 
 		chatCommandManager.registerCommandAsync(TOTAL_LEVEL_COMMAND_STRING, this::playerSkillLookup);
@@ -160,6 +169,8 @@ public class ChatCommandsPlugin extends Plugin
 	@Override
 	public void shutDown()
 	{
+		eventBus.unregister(this);
+
 		lastBossKill = null;
 
 		keyManager.unregisterKeyListener(chatKeyboardListener);
@@ -174,6 +185,14 @@ public class ChatCommandsPlugin extends Plugin
 		chatCommandManager.unregisterCommand(PB_COMMAND);
 		chatCommandManager.unregisterCommand(GC_COMMAND_STRING);
 		chatCommandManager.unregisterCommand(DUEL_ARENA_COMMAND);
+	}
+
+	private void addSubscriptions()
+	{
+		eventBus.subscribe(ChatMessage.class, this, this::onChatMessage);
+		eventBus.subscribe(GameTick.class, this, this::onGameTick);
+		eventBus.subscribe(WidgetLoaded.class, this, this::onWidgetLoaded);
+		eventBus.subscribe(VarbitChanged.class, this, this::onVarbitChanged);
 	}
 
 	@Provides
@@ -208,8 +227,7 @@ public class ChatCommandsPlugin extends Plugin
 		return personalBest == null ? 0 : personalBest;
 	}
 
-	@Subscribe
-	public void onChatMessage(ChatMessage chatMessage)
+	void onChatMessage(ChatMessage chatMessage)
 	{
 		if (chatMessage.getType() != ChatMessageType.TRADE
 			&& chatMessage.getType() != ChatMessageType.GAMEMESSAGE
@@ -324,8 +342,7 @@ public class ChatCommandsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	public void onGameTick(GameTick event)
+	private void onGameTick(GameTick event)
 	{
 		if (!logKills)
 		{
@@ -361,8 +378,7 @@ public class ChatCommandsPlugin extends Plugin
 		}
 	}
 
-	@Subscribe
-	public void onWidgetLoaded(WidgetLoaded widget)
+	private void onWidgetLoaded(WidgetLoaded widget)
 	{
 		// don't load kc if in an instance, if the player is in another players poh
 		// and reading their boss log
@@ -374,8 +390,7 @@ public class ChatCommandsPlugin extends Plugin
 		logKills = true;
 	}
 
-	@Subscribe
-	public void onVarbitChanged(VarbitChanged varbitChanged)
+	private void onVarbitChanged(VarbitChanged varbitChanged)
 	{
 		hiscoreEndpoint = getLocalHiscoreEndpointType();
 	}
@@ -811,49 +826,47 @@ public class ChatCommandsPlugin extends Plugin
 		if (!results.isEmpty())
 		{
 			ItemPrice item = retrieveFromList(results, search);
-			OSBGrandExchangeResult osbresult = new OSBGrandExchangeResult();
-			try
-			{
-				osbresult = CLIENT.lookupItem(item.getId());
-			}
-			catch (IOException e)
-			{
-				log.error("Error looking up prices", e);
-			}
+			CLIENT.lookupItem(item.getId())
+				.subscribeOn(Schedulers.single())
+				.subscribe(
+					(osbresult) ->
+						clientThread.invoke(() ->
+						{
+							int itemId = item.getId();
+							int itemPrice = itemManager.getItemPrice(itemId);
 
-			int itemId = item.getId();
-			int itemPrice = itemManager.getItemPrice(itemId);
+							final ChatMessageBuilder builder = new ChatMessageBuilder();
+							builder.append(ChatColorType.NORMAL);
+							builder.append(ChatColorType.HIGHLIGHT);
+							builder.append(item.getName());
+							builder.append(ChatColorType.NORMAL);
+							builder.append(": GE ");
+							builder.append(ChatColorType.HIGHLIGHT);
+							builder.append(StackFormatter.formatNumber(itemPrice));
+							builder.append(ChatColorType.NORMAL);
+							builder.append(": OSB ");
+							builder.append(ChatColorType.HIGHLIGHT);
+							builder.append(StackFormatter.formatNumber(osbresult.getOverall_average()));
 
-			final ChatMessageBuilder builder = new ChatMessageBuilder();
-			builder.append(ChatColorType.NORMAL);
-			builder.append(ChatColorType.HIGHLIGHT);
-			builder.append(item.getName());
-			builder.append(ChatColorType.NORMAL);
-			builder.append(": GE ");
-			builder.append(ChatColorType.HIGHLIGHT);
-			builder.append(StackFormatter.formatNumber(itemPrice));
-			builder.append(ChatColorType.NORMAL);
-			builder.append(": OSB ");
-			builder.append(ChatColorType.HIGHLIGHT);
-			builder.append(StackFormatter.formatNumber(osbresult.getOverall_average()));
+							ItemDefinition itemComposition = itemManager.getItemDefinition(itemId);
+							if (itemComposition != null)
+							{
+								int alchPrice = itemManager.getAlchValue(itemId);
+								builder
+									.append(ChatColorType.NORMAL)
+									.append(" HA value ")
+									.append(ChatColorType.HIGHLIGHT)
+									.append(StackFormatter.formatNumber(alchPrice));
+							}
 
-			ItemDefinition itemComposition = itemManager.getItemDefinition(itemId);
-			if (itemComposition != null)
-			{
-				int alchPrice = itemManager.getAlchValue(itemId);
-				builder
-					.append(ChatColorType.NORMAL)
-					.append(" HA value ")
-					.append(ChatColorType.HIGHLIGHT)
-					.append(StackFormatter.formatNumber(alchPrice));
-			}
+							String response = builder.build();
 
-			String response = builder.build();
-
-			log.debug("Setting response {}", response);
-			messageNode.setRuneLiteFormatMessage(response);
-			chatMessageManager.update(messageNode);
-			client.refreshChat();
+							log.debug("Setting response {}", response);
+							messageNode.setRuneLiteFormatMessage(response);
+							chatMessageManager.update(messageNode);
+							client.refreshChat();
+						})
+				);
 		}
 	}
 
