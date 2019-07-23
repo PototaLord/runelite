@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2018, Tomas Slusny <slusnucky@gmail.com>
- * Copyright (c) 2019, ThatGamerBlue <thatgamerblue@gmail.com>
+ * Copyright (c) 2019, Null (zeruth)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,58 +22,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.ui.overlay.components;
+package net.runelite.mixins;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import java.math.BigInteger;
+import net.runelite.api.mixins.Copy;
+import net.runelite.api.mixins.Inject;
+import net.runelite.api.mixins.Mixin;
+import net.runelite.api.mixins.Replace;
+import net.runelite.api.mixins.Shadow;
+import net.runelite.rs.api.RSBuffer;
+import net.runelite.rs.api.RSClient;
 
-@RequiredArgsConstructor
-@Setter
-public class ImageComponent implements LayoutableRenderableEntity
+@Mixin(RSBuffer.class)
+public abstract class RSBufferMixin implements RSBuffer
 {
-	private final BufferedImage image;
+	@Shadow("client")
+	private static RSClient client;
 
-	@Getter
-	private final Rectangle bounds = new Rectangle();
+	@Inject
+	private static BigInteger exponent = new BigInteger("10001", 16);
 
-	private Point preferredLocation = new Point();
-
-	private int xOffset = 0;
-	private int yOffset = 0;
-
-	@Override
-	public Dimension render(Graphics2D graphics)
+	@Copy("encryptRsa")
+	public void rs$encryptRsa(BigInteger var1, BigInteger var2)
 	{
-		if (image == null)
-		{
-			return null;
-		}
-
-		preferredLocation.x += xOffset;
-		preferredLocation.y += yOffset;
-
-		graphics.drawImage(image, preferredLocation.x, preferredLocation.y, null);
-		final Dimension dimension = new Dimension(image.getWidth(), image.getHeight());
-		bounds.setLocation(preferredLocation);
-		bounds.setSize(dimension);
-		return dimension;
 	}
 
-	@Override
-	public void setPreferredSize(Dimension dimension)
+	@Replace("encryptRsa")
+	public void rl$encryptRsa(BigInteger var1, BigInteger var2)
 	{
-		// Just use image dimensions for now
-	}
-
-	public void translate(int x, int y)
-	{
-		xOffset = x;
-		yOffset = y;
+		rs$encryptRsa(exponent, client.getModulus());
 	}
 }
